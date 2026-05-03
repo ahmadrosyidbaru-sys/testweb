@@ -3,58 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ProStudio | Intelligent Monitoring Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <title>ProStudio | Professional Monitoring Dashboard</title>
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
-            --bg: #030303;
+            --bg: #050505;
             --accent: #007aff;
-            --border: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(0, 122, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(15, 15, 15, 0.8);
             --speed-factor: 1; 
             --item-size: 320px;
         }
 
-        * { box-sizing: border-box; outline: none; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        
         body, html { 
             margin: 0; padding: 0; 
             background: var(--bg); 
             overflow: hidden; 
             font-family: 'Inter', sans-serif;
             color: white;
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
         }
 
         #viewport {
             width: 100vw; height: 100vh;
             display: flex; align-items: center; justify-content: center;
-            background: radial-gradient(circle at 50% 50%, #0a0a0a 0%, #000 100%);
+            background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
             position: relative;
         }
 
-        /* Tech Grid Overlay */
+        /* Tech Grid */
         #viewport::before {
             content: ''; position: absolute; inset: 0;
             background-image: linear-gradient(var(--border) 1px, transparent 1px), 
                               linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-size: 50px 50px;
             pointer-events: none; z-index: 1;
         }
 
         #wall {
-            display: flex; flex-direction: column; gap: 15px;
-            width: 120%; z-index: 0;
+            display: flex; flex-direction: column; gap: 20px;
+            width: 130%; z-index: 0;
         }
 
-        .row {
-            display: flex; gap: 15px;
-            width: max-content;
-            will-change: transform;
-        }
-
-        .row-1 { animation: scrollLeft calc(100s / var(--speed-factor)) linear infinite; }
-        .row-2 { animation: scrollLeft calc(120s / var(--speed-factor)) linear infinite reverse; }
-        .row-3 { animation: scrollLeft calc(110s / var(--speed-factor)) linear infinite; }
+        .row { display: flex; gap: 20px; width: max-content; will-change: transform; }
+        .row-1 { animation: scrollLeft calc(120s / var(--speed-factor)) linear infinite; }
+        .row-2 { animation: scrollLeft calc(140s / var(--speed-factor)) linear infinite reverse; }
+        .row-3 { animation: scrollLeft calc(130s / var(--speed-factor)) linear infinite; }
 
         @keyframes scrollLeft {
             0% { transform: translateX(0); }
@@ -63,148 +63,150 @@
 
         .photo-item {
             width: var(--item-size); height: var(--item-size);
-            background: #0a0a0a; border-radius: 4px;
+            background: #111; border-radius: 12px;
             object-fit: cover; cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             border: 1px solid var(--border);
-            filter: grayscale(40%) brightness(0.6);
+            filter: brightness(0.7);
         }
 
         .photo-item:hover {
-            filter: grayscale(0%) brightness(1.1);
-            transform: scale(1.03);
+            filter: brightness(1.2);
+            transform: scale(1.05) translateY(-10px);
             border-color: var(--accent);
-            box-shadow: 0 0 30px rgba(0,122,255,0.2);
+            box-shadow: 0 15px 40px rgba(0,122,255,0.3);
             z-index: 10;
         }
 
-        /* MODAL SYSTEM */
+        /* MODAL ANIMATION */
         .modal {
             position: fixed; inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(15px) saturate(180%);
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
             display: none; align-items: center; justify-content: center;
-            z-index: 2000; opacity: 0; transition: all 0.4s ease;
-            padding: 20px;
+            z-index: 2000; opacity: 0; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .modal.active { display: flex; opacity: 1; }
+        .modal.active .modal-content-wrapper { transform: scale(1); }
 
         .modal-content-wrapper {
-            position: relative;
-            display: flex; flex-direction: column; align-items: center;
-            padding: 20px;
-            background: rgba(10, 10, 10, 0.95);
+            transform: scale(0.8);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--glass);
             border: 1px solid var(--border);
-            border-radius: 15px;
-            width: 100%;
-            max-width: 600px;
+            padding: 25px; border-radius: 24px;
+            width: 90%; max-width: 650px; text-align: center;
         }
 
         .modal-image-view {
-            max-width: 100%;
-            max-height: 60vh;
-            border-radius: 8px;
-            object-fit: contain;
+            width: 100%; max-height: 65vh;
+            border-radius: 15px; object-fit: contain;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        /* HUD & Controls (Responsive) */
-        .controls, .hud {
-            position: fixed; z-index: 100; 
-            display: flex; gap: 8px;
-            transition: 0.3s;
+        /* UI CONTROLS */
+        .hud {
+            position: fixed; top: 30px; left: 30px;
+            display: flex; flex-direction: column; gap: 10px; z-index: 100;
         }
 
-        .hud { bottom: 20px; left: 20px; flex-direction: column; }
-        .controls { bottom: 20px; right: 20px; }
+        .controls {
+            position: fixed; bottom: 40px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; gap: 15px; z-index: 100;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 25px; border-radius: 100px;
+            backdrop-filter: blur(15px); border: 1px solid var(--border);
+        }
 
         .status-pill {
-            background: rgba(10,10,10,0.8); border: 1px solid var(--border);
-            padding: 8px 15px; border-radius: 4px; font-size: 9px; 
-            letter-spacing: 1px; font-weight: 700;
-            backdrop-filter: blur(10px);
+            background: var(--glass); border: 1px solid var(--border);
+            padding: 10px 18px; border-radius: 8px; font-size: 10px;
+            letter-spacing: 2px; font-weight: 600; text-transform: uppercase;
         }
 
-        .speed-btn, .scan-btn {
-            border: none; color: white;
-            padding: 10px 15px; border-radius: 100px;
-            font-size: 9px; font-weight: 700; cursor: pointer;
-            transition: 0.3s; letter-spacing: 1px;
+        .btn {
+            border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: all 0.3s ease; font-weight: 600; letter-spacing: 1px;
         }
 
-        .speed-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); opacity: 0.6; }
-        .speed-btn.active { background: var(--accent); opacity: 1; border-color: transparent; }
-        .scan-btn { background: white; color: black; font-weight: 900; }
-
-        /* Mobile Adjustments */
-        @media (max-width: 768px) {
-            :root { --item-size: 180px; }
-            h1 { font-size: 1.8rem !important; letter-spacing: 8px !important; }
-            .btn-start { padding: 15px 30px !important; width: 80%; }
-            .hud, .controls { 
-                bottom: 15px; 
-                left: 50%; 
-                transform: translateX(-50%); 
-                width: 90%;
-                justify-content: center;
-                align-items: center;
-            }
-            .hud { bottom: 70px; flex-direction: row; }
-            .controls { bottom: 20px; }
-            .speed-btn { padding: 8px 12px; }
+        .speed-btn {
+            background: transparent; color: rgba(255,255,255,0.5);
+            padding: 12px 20px; border-radius: 50px; font-size: 11px;
         }
 
-        @media (max-height: 500px) and (orientation: landscape) {
-            :root { --item-size: 140px; }
-            #wall { gap: 10px; }
-            .row { gap: 10px; }
-            .hud { display: none; } /* Hide HUD in small landscape to save space */
+        .speed-btn.active {
+            background: var(--accent); color: white;
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        .btn-close-modal {
-            margin-top: 15px; background: transparent; border: 1px solid var(--border);
-            color: #aaa; padding: 10px 20px; border-radius: 100px;
-            font-size: 9px; font-weight: 800; cursor: pointer;
+        .scan-btn {
+            background: white; color: black;
+            padding: 12px 28px; border-radius: 50px;
+            font-size: 12px; font-weight: 800;
         }
 
+        .scan-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+
+        /* OVERLAY START */
         .overlay {
             position: fixed; inset: 0; background: #000;
             display: flex; align-items: center; justify-content: center;
-            z-index: 3000; transition: 1s; padding: 20px;
+            z-index: 3000; transition: 1s cubic-bezier(0.7, 0, 0.3, 1);
         }
-        .overlay.hidden { opacity: 0; visibility: hidden; }
-        
+        .overlay.hidden { opacity: 0; visibility: hidden; transform: translateY(-100%); }
+
         .btn-start {
-            background: white; color: black; border: none;
-            padding: 20px 60px; border-radius: 2px;
-            font-weight: 900; cursor: pointer; letter-spacing: 3px; font-size: 11px;
+            background: white; color: black; padding: 22px 50px;
+            border-radius: 12px; font-weight: 900; font-size: 14px;
+            letter-spacing: 4px; border: none; cursor: pointer;
+            transition: 0.4s;
+        }
+        .btn-start:hover { transform: scale(1.05); letter-spacing: 6px; }
+
+        /* Responsive Mobile */
+        @media (max-width: 768px) {
+            :root { --item-size: 200px; }
+            .controls { width: 90%; gap: 8px; padding: 10px; }
+            .speed-btn { padding: 10px; font-size: 9px; flex: 1; justify-content: center; }
+            .scan-btn { padding: 10px 15px; font-size: 10px; }
+            .hud { top: 20px; left: 20px; right: 20px; align-items: center; }
+            h1 { font-size: 2.2rem !important; }
         }
 
-        #qr-container img {
-            width: 100%; max-width: 250px; height: auto;
+        .btn-close {
+            margin-top: 20px; background: rgba(255,255,255,0.1);
+            border: none; color: white; padding: 12px 30px;
+            border-radius: 100px; cursor: pointer; font-size: 11px;
         }
     </style>
 </head>
 <body>
 
     <div id="ui" class="overlay">
-        <div style="text-align:center; width: 100%;">
-            <h1 style="font-weight: 900; letter-spacing: 15px; font-size: 3rem; margin-bottom: 10px;">PROSTUDIO</h1>
-            <p style="opacity: 0.3; font-size: 0.6rem; margin-bottom: 40px; letter-spacing: 5px;">INTELLIGENT VISUAL CORE</p>
-            <button class="btn-start" onclick="initMonitor()">INITIALIZE SYSTEM</button>
+        <div style="text-align:center;">
+            <i class="fas fa-camera-retro" style="font-size: 3rem; color: var(--accent); margin-bottom: 20px;"></i>
+            <h1 style="font-weight: 900; letter-spacing: 12px; font-size: 3.5rem; margin: 0;">PROSTUDIO</h1>
+            <p style="opacity: 0.5; font-size: 0.9rem; margin-bottom: 40px; letter-spacing: 4px;">Project by ocid ganteng</p>
+            <button class="btn-start" onclick="initMonitor()">
+                <i class="fas fa-folder-open"></i> PILIH FOLDER
+            </button>
         </div>
     </div>
 
     <div class="hud">
-        <div class="status-pill" id="folderInfo">SYSTEM_IDLE</div>
-        <div class="status-pill" id="countInfo">000_DATA_UNITS</div>
+        <div class="status-pill" id="folderInfo"><i class="fas fa-circle" style="color: #ff3b30; animation: pulse 1s infinite;"></i> SYSTEM_READY</div>
+        <div class="status-pill" id="countInfo"><i class="fas fa-images"></i> 000_DETECTED</div>
     </div>
 
     <div class="controls">
-        <button class="speed-btn active" onclick="setSpeed(1, this)">S_01</button>
-        <button class="speed-btn" onclick="setSpeed(4, this)">S_02</button>
-        <button class="speed-btn" onclick="setSpeed(10, this)">S_03</button>
-        <button class="scan-btn" onclick="openScanModal()">SCAN</button>
+        <button class="btn speed-btn active" onclick="setSpeed(1, this)">SLOW</button>
+        <button class="btn speed-btn" onclick="setSpeed(4, this)">MEDIUM</button>
+        <button class="btn speed-btn" onclick="setSpeed(10, this)">FAST</button>
+        <button class="btn scan-btn" onclick="openScanModal()">
+            <i class="fas fa-qrcode"></i> SCAN
+        </button>
     </div>
 
     <div id="viewport">
@@ -218,20 +220,24 @@
     <!-- MODAL PREVIEW -->
     <div id="previewModal" class="modal">
         <div class="modal-content-wrapper">
-            <div id="modalTag" style="color: var(--accent); font-size: 9px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px;">PREVIEW_UNIT</div>
+            <div id="modalTag" style="color: var(--accent); font-size: 10px; font-weight: 900; letter-spacing: 3px; margin-bottom: 15px;">
+                <i class="fas fa-expand"></i> PREVIEW_MODE
+            </div>
             <img id="modalImg" class="modal-image-view" src="">
-            <button class="btn-close-modal" onclick="closeAllModals()">CLOSE</button>
+            <br>
+            <button class="btn-close" onclick="closeAllModals()"><i class="fas fa-times"></i> TUTUP</button>
         </div>
     </div>
 
     <!-- MODAL SCAN -->
     <div id="scanModal" class="modal">
         <div class="modal-content-wrapper">
-            <h2 style="margin:0; letter-spacing: 3px; color: var(--accent); font-size: 1.2rem;">SCAN ACCESS</h2>
-            <div id="qr-container" style="background: white; padding: 15px; border-radius: 12px; margin: 20px 0;">
-                <img src="qrcode.png" alt="QR Access">
+            <h2 style="margin:0; letter-spacing: 4px; color: var(--accent);"><i class="fas fa-qrcode"></i> AKSES SCAN</h2>
+            <p style="font-size: 12px; opacity: 0.6;">Scan QR ini untuk melihat galeri online</p>
+            <div id="qr-container" style="background: white; padding: 20px; border-radius: 20px; margin: 25px auto; width: fit-content;">
+                <img src="qrcode.png" alt="QR Access" style="width: 200px; height: 200px; display: block;">
             </div>
-            <button class="btn-close-modal" onclick="closeAllModals()">BACK</button>
+            <button class="btn-close" onclick="closeAllModals()">KEMBALI</button>
         </div>
     </div>
 
@@ -250,23 +256,25 @@
         function openPreview(url, isAuto = false) {
             clearTimeout(autoCloseTimer);
             const modal = document.getElementById('previewModal');
-            document.getElementById('modalImg').src = url;
-            document.getElementById('modalTag').innerText = isAuto ? "NEW_DATA_DETECTED" : "PREVIEW_UNIT";
+            const modalImg = document.getElementById('modalImg');
+            
+            modalImg.src = url;
+            document.getElementById('modalTag').innerHTML = isAuto ? 
+                '<i class="fas fa-bell" style="color: #ffcc00"></i> HASIL BARU TERDETEKSI' : 
+                '<i class="fas fa-expand"></i> PREVIEW_MODE';
             
             modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('active'), 10);
+            setTimeout(() => modal.classList.add('active'), 50);
 
             if (isAuto) {
-                autoCloseTimer = setTimeout(() => {
-                    closeAllModals();
-                }, 5000);
+                autoCloseTimer = setTimeout(() => closeAllModals(), 6000);
             }
         }
 
         function openScanModal() {
             const modal = document.getElementById('scanModal');
             modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('active'), 10);
+            setTimeout(() => modal.classList.add('active'), 50);
         }
 
         function closeAllModals() {
@@ -282,17 +290,17 @@
             try {
                 folderHandle = await window.showDirectoryPicker();
                 document.getElementById('ui').classList.add('hidden');
-                let folderName = folderHandle.name.length > 15 ? folderHandle.name.substring(0,12) + "..." : folderHandle.name;
-                document.getElementById('folderInfo').innerText = "LIVE: " + folderName.toUpperCase();
+                let name = folderHandle.name.toUpperCase();
+                document.getElementById('folderInfo').innerHTML = `<i class="fas fa-broadcast-tower" style="color: #34c759"></i> LIVE: ${name}`;
                 await initialScan();
                 renderWall();
-                setInterval(scanForNewFiles, 1500);
-            } catch (e) { console.log("Init aborted."); }
+                setInterval(scanForNewFiles, 2000);
+            } catch (e) { console.log("Akses Dibatalkan"); }
         }
 
         async function initialScan() {
             for await (const entry of folderHandle.values()) {
-                if (entry.kind === 'file' && entry.name.match(/\.(jpg|jpeg|png|webp)$/i)) {
+                if (entry.kind === 'file' && entry.name.match(/\.(jpg|jpeg|png|webp|heic)$/i)) {
                     knownFiles.add(entry.name);
                     const file = await entry.getFile();
                     allImageUrls.push(URL.createObjectURL(file));
@@ -315,14 +323,11 @@
                     }
                 }
             }
-            if (foundNew) {
-                renderWall();
-                updateCount();
-            }
+            if (foundNew) { renderWall(); updateCount(); }
         }
 
         function updateCount() {
-            document.getElementById('countInfo').innerText = String(knownFiles.size).padStart(3, '0') + "_DATA_UNITS";
+            document.getElementById('countInfo').innerHTML = `<i class="fas fa-images"></i> ${String(knownFiles.size).padStart(3, '0')} FOTO TERDETEKSI`;
         }
 
         function renderWall() {
@@ -330,19 +335,19 @@
             rows.forEach(r => r.innerHTML = "");
             if (allImageUrls.length === 0) return;
 
+            // Isi baris
             allImageUrls.forEach((url, index) => {
                 rows[index % 3].appendChild(createPhotoEl(url));
             });
 
+            // Cloning untuk Infinite Loop
             rows.forEach(r => {
-                const currentContent = Array.from(r.children);
-                if(currentContent.length > 0) {
-                    currentContent.forEach(node => {
-                        const clone = node.cloneNode(true);
-                        clone.onclick = () => openPreview(node.src, false);
-                        r.appendChild(clone);
-                    });
-                }
+                const nodes = Array.from(r.children);
+                nodes.forEach(node => {
+                    const clone = node.cloneNode(true);
+                    clone.onclick = () => openPreview(node.src, false);
+                    r.appendChild(clone);
+                });
             });
         }
 
@@ -354,12 +359,9 @@
             return img;
         }
 
+        // Close on ESC
+        window.addEventListener('keydown', (e) => { if (e.key === "Escape") closeAllModals(); });
         window.onclick = (e) => { if (e.target.classList.contains('modal')) closeAllModals(); }
-        
-        // Handle ESC key
-        window.addEventListener('keydown', (e) => {
-            if (e.key === "Escape") closeAllModals();
-        });
     </script>
 </body>
 </html>
