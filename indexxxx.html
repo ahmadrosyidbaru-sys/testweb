@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snap Studio - Creative Photobooth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background: #ffffff; color: #000; font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; overflow: hidden; }
+        .screen-fade { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .layout-card { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+        .layout-card:hover { transform: translateY(-5px); border-color: rgba(59, 130, 246, 0.3); }
+        .layout-card.active {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+            transform: scale(1.02);
+        }
+
+        #countdown-box { z-index: 50; color: #3b82f6; text-shadow: 0 0 50px rgba(59, 130, 246, 0.5); }
+        canvas { max-height: 70vh; width: auto; max-width: 100%; border-radius: 8px; box-shadow: 0 30px 60px -12px rgba(0,0,0,0.2); }
+        
+        /* Utility untuk mirroring */
+        .mirror-mode { transform: scaleX(-1); }
+    </style>
+</head>
+<body class="flex items-center justify-center">
+
+    <!-- SCREEN 1: INPUT NAMA -->
+    <section id="name-screen" class="fixed inset-0 z-[150] bg-white flex items-center justify-center p-6">
+        <div class="w-full max-w-md space-y-8 text-center screen-fade">
+            <div class="space-y-2">
+                <h1 class="text-7xl font-black italic tracking-tighter text-blue-600 uppercase leading-none">Snap<br>Studio</h1>
+                <p class="text-black/30 text-[10px] font-bold uppercase tracking-[0.5em]">Creative Studio v5.5</p>
+            </div>
+            <div class="space-y-4">
+                <input type="text" id="user-name" placeholder="MASUKKAN NAMA..." class="w-full bg-black/5 border border-black/10 p-6 rounded-2xl text-center font-bold outline-none focus:border-blue-500 uppercase transition-all">
+                <button onclick="goToLayout()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">Lanjut</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCREEN 2: PILIH LAYOUT -->
+    <section id="layout-screen" class="fixed inset-0 z-[140] bg-white hidden flex items-center justify-center p-6">
+        <div class="w-full max-w-md space-y-10 text-center screen-fade">
+            <div class="space-y-2">
+                <h2 class="text-3xl font-black uppercase italic text-black leading-none">Pilih Layout</h2>
+                <p class="text-black/40 text-[10px] font-bold uppercase tracking-widest">Tentukan gaya fotomu hari ini</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div onclick="selectLayout('strip')" id="card-strip" class="layout-card active bg-white p-6 rounded-[2.5rem] flex flex-col items-center gap-4">
+                    <div id="icon-strip" class="w-12 h-20 border-2 border-blue-600 rounded-lg flex flex-col gap-1.5 p-1.5">
+                        <div class="bg-blue-600 w-full h-1/3 rounded-sm"></div>
+                        <div class="bg-blue-600 w-full h-1/3 rounded-sm"></div>
+                        <div class="bg-blue-600 w-full h-1/3 rounded-sm"></div>
+                    </div>
+                    <p class="font-black text-sm uppercase">Classic Strip</p>
+                </div>
+
+                <div onclick="selectLayout('grid')" id="card-grid" class="layout-card bg-white p-6 rounded-[2.5rem] flex flex-col items-center gap-4">
+                    <div id="icon-grid" class="w-16 h-16 border-2 border-black/10 rounded-lg grid grid-cols-2 gap-1.5 p-1.5">
+                        <div class="bg-black/10 w-full h-full rounded-sm"></div>
+                        <div class="bg-black/10 w-full h-full rounded-sm"></div>
+                        <div class="bg-black/10 w-full h-full rounded-sm"></div>
+                        <div class="bg-black/10 w-full h-full rounded-sm"></div>
+                    </div>
+                    <p class="font-black text-sm uppercase">Square Grid</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <button onclick="startApp()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-200">Buka Kamera</button>
+                <button onclick="backToName()" class="text-[10px] font-black text-black/30 uppercase tracking-widest hover:text-black transition-colors">Kembali Ganti Nama</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN APP -->
+    <main id="main-app" class="hidden w-full h-full flex flex-col lg:flex-row overflow-hidden">
+        <div id="camera-section" class="lg:w-1/2 w-full h-full bg-slate-50 flex flex-col items-center justify-center p-4 relative">
+            <div class="relative w-full max-w-md aspect-square rounded-[2rem] overflow-hidden border border-black/5 bg-black">
+                <video id="video" autoplay playsinline class="w-full h-full object-cover"></video>
+                <div id="countdown-box" class="absolute inset-0 flex items-center justify-center text-[150px] font-black"></div>
+                
+                <!-- Controls Kamera -->
+                <div class="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-4">
+                    <button onclick="switchCamera()" class="bg-white/20 backdrop-blur-md p-3 rounded-full border border-white/50 hover:bg-white/40">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+                    </button>
+                    <button id="snap-btn" onclick="takeIndividualSnap()" class="w-20 h-20 bg-white/20 backdrop-blur-md border-4 border-white rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-90 group">
+                        <div class="w-14 h-14 bg-white rounded-full group-hover:bg-blue-500 transition-colors"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="editing-section" class="lg:w-1/2 w-full h-full bg-white flex flex-col items-center p-6 lg:p-12 overflow-y-auto">
+            <canvas id="main-canvas"></canvas>
+            <div id="editor-tools" class="hidden mt-8 w-full max-w-md space-y-4">
+                 <button onclick="window.location.reload()" class="w-full bg-black text-white py-4 rounded-2xl font-bold uppercase text-xs tracking-widest">Reset Sesi</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('main-canvas');
+        let currentLayout = 'strip'; 
+        let userName = '';
+        let sessionPhotos = [];
+        let currentFacingMode = 'user'; // Default kamera depan
+
+        function goToLayout() {
+            const input = document.getElementById('user-name').value.trim();
+            if(!input) return alert("Masukkan namamu dulu!");
+            userName = input.toUpperCase();
+            document.getElementById('name-screen').classList.add('hidden');
+            document.getElementById('layout-screen').classList.remove('hidden');
+        }
+
+        function backToName() {
+            document.getElementById('layout-screen').classList.add('hidden');
+            document.getElementById('name-screen').classList.remove('hidden');
+        }
+
+        function selectLayout(l) {
+            currentLayout = l;
+            document.getElementById('card-strip').classList.toggle('active', l === 'strip');
+            document.getElementById('card-grid').classList.toggle('active', l === 'grid');
+        }
+
+        // FUNGSI KAMERA DENGAN SWITCH
+        async function initCamera(facingMode) {
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: facingMode, width: 1080, height: 1080 }, 
+                    audio: false 
+                });
+                video.srcObject = stream;
+                
+                // Mirroring otomatis jika kamera depan
+                if(facingMode === 'user') video.classList.add('mirror-mode');
+                else video.classList.remove('mirror-mode');
+                
+            } catch (e) {
+                alert("Kamera tidak dapat diakses.");
+            }
+        }
+
+        function switchCamera() {
+            currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
+            initCamera(currentFacingMode);
+        }
+
+        function startApp() {
+            document.getElementById('layout-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            initCamera(currentFacingMode);
+        }
+
+        // FUNGSI JEPRET FOTO
+        async function takeIndividualSnap() {
+            const max = currentLayout === 'strip' ? 3 : 4;
+            if(sessionPhotos.length >= max) return;
+
+            const btn = document.getElementById('snap-btn');
+            const box = document.getElementById('countdown-box');
+            btn.disabled = true;
+
+            // Countdown
+            for(let i=3; i>0; i--) {
+                box.innerText = i;
+                await new Promise(r => setTimeout(r, 1000));
+            }
+            box.innerText = '';
+
+            // Capture ke temporary canvas
+            const temp = document.createElement('canvas');
+            temp.width = 800; temp.height = 800;
+            const ctx = temp.getContext('2d');
+
+            if(currentFacingMode === 'user') {
+                ctx.translate(800, 0);
+                ctx.scale(-1, 1);
+            }
+            
+            ctx.drawImage(video, 0, 0, 800, 800);
+            sessionPhotos.push(temp);
+            
+            drawFinal();
+            btn.disabled = false;
+
+            if(sessionPhotos.length >= max) {
+                document.getElementById('editor-tools').classList.remove('hidden');
+                btn.classList.add('hidden');
+            }
+        }
+
+        function drawFinal() {
+            const ctx = canvas.getContext('2d');
+            const isStrip = currentLayout === 'strip';
+            
+            canvas.width = isStrip ? 400 : 800;
+            canvas.height = isStrip ? 1200 : 800;
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0,0, canvas.width, canvas.height);
+
+            sessionPhotos.forEach((img, i) => {
+                const x = isStrip ? 20 : (i % 2 === 0 ? 20 : 410);
+                const y = isStrip ? (20 + (i * 380)) : (i < 2 ? 20 : 410);
+                ctx.drawImage(img, 0, 0, 800, 800, x, y, 360, 360);
+            });
+
+            ctx.fillStyle = "#000";
+            ctx.font = "bold 24px 'Plus Jakarta Sans'";
+            ctx.textAlign = "center";
+            ctx.fillText(`SNAP STUDIO × ${userName}`, canvas.width/2, canvas.height - 30);
+        }
+    </script>
+</body>
+</html>
