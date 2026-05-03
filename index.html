@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ProStudio | Intelligent Monitoring Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -11,6 +11,7 @@
             --accent: #007aff;
             --border: rgba(255, 255, 255, 0.08);
             --speed-factor: 1; 
+            --item-size: 320px;
         }
 
         * { box-sizing: border-box; outline: none; }
@@ -20,12 +21,15 @@
             overflow: hidden; 
             font-family: 'Inter', sans-serif;
             color: white;
+            width: 100%;
+            height: 100%;
         }
 
         #viewport {
             width: 100vw; height: 100vh;
             display: flex; align-items: center; justify-content: center;
             background: radial-gradient(circle at 50% 50%, #0a0a0a 0%, #000 100%);
+            position: relative;
         }
 
         /* Tech Grid Overlay */
@@ -33,17 +37,17 @@
             content: ''; position: absolute; inset: 0;
             background-image: linear-gradient(var(--border) 1px, transparent 1px), 
                               linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 50px 50px;
+            background-size: 40px 40px;
             pointer-events: none; z-index: 1;
         }
 
         #wall {
-            display: flex; flex-direction: column; gap: 25px;
-            width: 110%; z-index: 0;
+            display: flex; flex-direction: column; gap: 15px;
+            width: 120%; z-index: 0;
         }
 
         .row {
-            display: flex; gap: 25px;
+            display: flex; gap: 15px;
             width: max-content;
             will-change: transform;
         }
@@ -58,7 +62,7 @@
         }
 
         .photo-item {
-            width: 320px; height: 320px;
+            width: var(--item-size); height: var(--item-size);
             background: #0a0a0a; border-radius: 4px;
             object-fit: cover; cursor: pointer;
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -77,10 +81,11 @@
         /* MODAL SYSTEM */
         .modal {
             position: fixed; inset: 0;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.8);
             backdrop-filter: blur(15px) saturate(180%);
             display: none; align-items: center; justify-content: center;
             z-index: 2000; opacity: 0; transition: all 0.4s ease;
+            padding: 20px;
         }
 
         .modal.active { display: flex; opacity: 1; }
@@ -88,80 +93,104 @@
         .modal-content-wrapper {
             position: relative;
             display: flex; flex-direction: column; align-items: center;
-            padding: 40px;
+            padding: 20px;
             background: rgba(10, 10, 10, 0.95);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.9);
-            text-align: center;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
         }
 
         .modal-image-view {
-            max-width: 80vw;
-            max-height: 70vh;
+            max-width: 100%;
+            max-height: 60vh;
             border-radius: 8px;
-            border: 1px solid var(--border);
-            display: block;
+            object-fit: contain;
         }
 
-        /* HUD & Controls */
-        .controls {
-            position: fixed; bottom: 40px; right: 40px;
-            z-index: 100; display: flex; gap: 12px;
-            background: rgba(10,10,10,0.6); border: 1px solid var(--border);
-            backdrop-filter: blur(20px); padding: 8px; border-radius: 100px;
+        /* HUD & Controls (Responsive) */
+        .controls, .hud {
+            position: fixed; z-index: 100; 
+            display: flex; gap: 8px;
+            transition: 0.3s;
+        }
+
+        .hud { bottom: 20px; left: 20px; flex-direction: column; }
+        .controls { bottom: 20px; right: 20px; }
+
+        .status-pill {
+            background: rgba(10,10,10,0.8); border: 1px solid var(--border);
+            padding: 8px 15px; border-radius: 4px; font-size: 9px; 
+            letter-spacing: 1px; font-weight: 700;
+            backdrop-filter: blur(10px);
         }
 
         .speed-btn, .scan-btn {
             border: none; color: white;
-            padding: 10px 24px; border-radius: 100px;
-            font-size: 10px; font-weight: 700; cursor: pointer;
-            transition: 0.3s; letter-spacing: 1.5px;
+            padding: 10px 15px; border-radius: 100px;
+            font-size: 9px; font-weight: 700; cursor: pointer;
+            transition: 0.3s; letter-spacing: 1px;
         }
 
-        .speed-btn { background: transparent; opacity: 0.4; }
-        .speed-btn.active { background: rgba(255,255,255,0.1); opacity: 1; }
-        
-        .scan-btn { background: var(--accent); box-shadow: 0 4px 15px rgba(0,122,255,0.3); }
+        .speed-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); opacity: 0.6; }
+        .speed-btn.active { background: var(--accent); opacity: 1; border-color: transparent; }
+        .scan-btn { background: white; color: black; font-weight: 900; }
 
-        .hud {
-            position: fixed; bottom: 40px; left: 40px;
-            z-index: 100; display: flex; gap: 15px;
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            :root { --item-size: 180px; }
+            h1 { font-size: 1.8rem !important; letter-spacing: 8px !important; }
+            .btn-start { padding: 15px 30px !important; width: 80%; }
+            .hud, .controls { 
+                bottom: 15px; 
+                left: 50%; 
+                transform: translateX(-50%); 
+                width: 90%;
+                justify-content: center;
+                align-items: center;
+            }
+            .hud { bottom: 70px; flex-direction: row; }
+            .controls { bottom: 20px; }
+            .speed-btn { padding: 8px 12px; }
         }
-        .status-pill {
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-            padding: 10px 20px; border-radius: 4px; font-size: 10px; 
-            letter-spacing: 2px; font-weight: 700;
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            :root { --item-size: 140px; }
+            #wall { gap: 10px; }
+            .row { gap: 10px; }
+            .hud { display: none; } /* Hide HUD in small landscape to save space */
         }
 
         .btn-close-modal {
-            margin-top: 25px; background: transparent; border: 1px solid var(--border);
-            color: #666; padding: 10px 30px; border-radius: 100px;
-            font-size: 9px; font-weight: 800; cursor: pointer; transition: 0.3s;
+            margin-top: 15px; background: transparent; border: 1px solid var(--border);
+            color: #aaa; padding: 10px 20px; border-radius: 100px;
+            font-size: 9px; font-weight: 800; cursor: pointer;
         }
-        .btn-close-modal:hover { color: white; border-color: white; }
 
         .overlay {
             position: fixed; inset: 0; background: #000;
             display: flex; align-items: center; justify-content: center;
-            z-index: 3000; transition: 1s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 3000; transition: 1s; padding: 20px;
         }
         .overlay.hidden { opacity: 0; visibility: hidden; }
         
         .btn-start {
             background: white; color: black; border: none;
             padding: 20px 60px; border-radius: 2px;
-            font-weight: 900; cursor: pointer; transition: 0.4s;
-            letter-spacing: 3px; font-size: 12px;
+            font-weight: 900; cursor: pointer; letter-spacing: 3px; font-size: 11px;
+        }
+
+        #qr-container img {
+            width: 100%; max-width: 250px; height: auto;
         }
     </style>
 </head>
 <body>
 
     <div id="ui" class="overlay">
-        <div style="text-align:center">
-            <h1 style="font-weight: 900; letter-spacing: 15px; font-size: 3rem; margin-bottom: 0;">PROSTUDIO</h1>
-            <p style="opacity: 0.3; font-size: 0.7rem; margin-bottom: 60px; letter-spacing: 8px;">INTELLIGENT VISUAL CORE</p>
+        <div style="text-align:center; width: 100%;">
+            <h1 style="font-weight: 900; letter-spacing: 15px; font-size: 3rem; margin-bottom: 10px;">PROSTUDIO</h1>
+            <p style="opacity: 0.3; font-size: 0.6rem; margin-bottom: 40px; letter-spacing: 5px;">INTELLIGENT VISUAL CORE</p>
             <button class="btn-start" onclick="initMonitor()">INITIALIZE SYSTEM</button>
         </div>
     </div>
@@ -175,7 +204,7 @@
         <button class="speed-btn active" onclick="setSpeed(1, this)">S_01</button>
         <button class="speed-btn" onclick="setSpeed(4, this)">S_02</button>
         <button class="speed-btn" onclick="setSpeed(10, this)">S_03</button>
-        <button class="scan-btn" onclick="openScanModal()">SCAN ACCESS</button>
+        <button class="scan-btn" onclick="openScanModal()">SCAN</button>
     </div>
 
     <div id="viewport">
@@ -189,20 +218,20 @@
     <!-- MODAL PREVIEW -->
     <div id="previewModal" class="modal">
         <div class="modal-content-wrapper">
-            <div id="modalTag" style="color: var(--accent); font-size: 10px; font-weight: 900; letter-spacing: 3px; margin-bottom: 15px;">PREVIEW_UNIT</div>
+            <div id="modalTag" style="color: var(--accent); font-size: 9px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px;">PREVIEW_UNIT</div>
             <img id="modalImg" class="modal-image-view" src="">
-            <button class="btn-close-modal" onclick="closeAllModals()">CLOSE [ESC]</button>
+            <button class="btn-close-modal" onclick="closeAllModals()">CLOSE</button>
         </div>
     </div>
 
     <!-- MODAL SCAN -->
     <div id="scanModal" class="modal">
         <div class="modal-content-wrapper">
-            <h2 style="margin:0; letter-spacing: 5px; color: var(--accent); font-size: 1.5rem;">SCAN DISINI</h2>
-            <div style="background: white; padding: 15px; border-radius: 12px; margin: 25px 0;">
-                <img src="qrcode.png" alt="QR Access" style="width: 300px; height: 300px; display: block;">
+            <h2 style="margin:0; letter-spacing: 3px; color: var(--accent); font-size: 1.2rem;">SCAN ACCESS</h2>
+            <div id="qr-container" style="background: white; padding: 15px; border-radius: 12px; margin: 20px 0;">
+                <img src="qrcode.png" alt="QR Access">
             </div>
-            <button class="btn-close-modal" onclick="closeAllModals()">BACK TO DASHBOARD</button>
+            <button class="btn-close-modal" onclick="closeAllModals()">BACK</button>
         </div>
     </div>
 
@@ -227,7 +256,6 @@
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('active'), 10);
 
-            // Jika dipicu oleh foto baru, tutup otomatis setelah 5 detik
             if (isAuto) {
                 autoCloseTimer = setTimeout(() => {
                     closeAllModals();
@@ -254,7 +282,8 @@
             try {
                 folderHandle = await window.showDirectoryPicker();
                 document.getElementById('ui').classList.add('hidden');
-                document.getElementById('folderInfo').innerText = "LIVE: " + folderHandle.name.toUpperCase();
+                let folderName = folderHandle.name.length > 15 ? folderHandle.name.substring(0,12) + "..." : folderHandle.name;
+                document.getElementById('folderInfo').innerText = "LIVE: " + folderName.toUpperCase();
                 await initialScan();
                 renderWall();
                 setInterval(scanForNewFiles, 1500);
@@ -281,7 +310,7 @@
                         knownFiles.add(entry.name);
                         const url = URL.createObjectURL(file);
                         allImageUrls.push(url);
-                        openPreview(url, true); // Trigger Auto-Close
+                        openPreview(url, true);
                         foundNew = true;
                     }
                 }
@@ -301,19 +330,19 @@
             rows.forEach(r => r.innerHTML = "");
             if (allImageUrls.length === 0) return;
 
-            // Masukkan data asli (fotonya otomatis terupdate di sini)
             allImageUrls.forEach((url, index) => {
                 rows[index % 3].appendChild(createPhotoEl(url));
             });
 
-            // Kloning untuk seamless infinite loop
             rows.forEach(r => {
                 const currentContent = Array.from(r.children);
-                currentContent.forEach(node => {
-                    const clone = node.cloneNode(true);
-                    clone.onclick = () => openPreview(node.src, false);
-                    r.appendChild(clone);
-                });
+                if(currentContent.length > 0) {
+                    currentContent.forEach(node => {
+                        const clone = node.cloneNode(true);
+                        clone.onclick = () => openPreview(node.src, false);
+                        r.appendChild(clone);
+                    });
+                }
             });
         }
 
@@ -326,6 +355,11 @@
         }
 
         window.onclick = (e) => { if (e.target.classList.contains('modal')) closeAllModals(); }
+        
+        // Handle ESC key
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") closeAllModals();
+        });
     </script>
 </body>
 </html>
