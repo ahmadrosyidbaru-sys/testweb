@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undangan Pernikahan - Romeo & Juliet</title>
+
+    <!-- Google Fonts: Nanum Pen Script & Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        nanum: ['"Nanum Pen Script"', 'cursive'],
+                        nunito: ['"Nunito"', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.1)',
+                        glassDark: 'rgba(0, 0, 0, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Phosphor Icons (Outline Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Custom CSS -->
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+            background-color: transparent;
+            color: #ffffff;
+            scroll-behavior: smooth;
+        }
+
+        /* Hide scrollbar for aesthetic */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+
+        /* Glassmorphism / Clean Panels */
+        .glass-panel {
+            /* Hanya menggunakan outline putih rounded, tanpa blur dan background */
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 1.5rem;
+        }
+        
+        .glass-button {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .glass-button:hover {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+        .glass-button:hover i {
+            color: #000000;
+        }
+
+        /* Cover Video Overlay Setup */
+        #cover-page {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)); /* Gradasi transparan agar teks cover terbaca di atas video */
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+        }
+
+        /* Continuous Horizontal Scroll for Gallery */
+        .gallery-container {
+            display: flex;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+            position: relative;
+            padding: 20px 0;
+        }
+        .gallery-track {
+            display: flex;
+            gap: 1.5rem;
+            animation: scrollGallery 25s linear infinite;
+        }
+        .gallery-container:hover .gallery-track {
+            animation-play-state: paused;
+        }
+        .gallery-item {
+            width: 250px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 1rem;
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            /* Efek gradasi transparan di bagian bawah foto */
+            -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+        }
+
+        @keyframes scrollGallery {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-250px * 4 - 1.5rem * 4)); }
+        }
+
+        /* Custom Notification Toast */
+        #toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.9);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            transition: bottom 0.4s ease;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        #toast.show {
+            bottom: 30px;
+        }
+
+        /* Menu & Audio Button Animations */
+        .animate-spin-slow {
+            animation: spin 4s linear infinite;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        .menu-item {
+            transition: all 0.3s ease;
+        }
+        .menu-item:hover {
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 0.1em;
+        }
+    </style>
+</head>
+<body class="font-nunito antialiased selection:bg-white/30">
+
+    <!-- AUDIO PLAYER (Ganti YouTube dengan MP3 Lokal) -->
+    <audio id="bg-music" loop preload="auto">
+        <!-- Letakkan file lagu MP3 Anda di folder asset/audio/ -->
+        <source src="asset/audio/song.mp3" type="audio/mpeg">
+        <source src="main/asset/audio/song.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Floating Audio Button -->
+    <button id="audio-btn" onclick="toggleAudio()" class="fixed bottom-6 right-6 z-[90] hidden w-12 h-12 rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 border border-white/30 bg-black/20 backdrop-blur-md hover:bg-white/20 hover:scale-110 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+        <i class="ph ph-music-notes text-xl animate-spin-slow" id="audio-icon"></i>
+    </button>
+
+    <!-- Floating Hamburger Button (Hanya tampil di HP) -->
+    <button id="hamburger-btn" onclick="toggleMenu()" class="fixed top-6 right-6 z-[100] hidden w-12 h-12 rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 border border-white/30 bg-black/20 backdrop-blur-md hover:bg-white/20 hover:scale-110 md:hidden shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+        <i class="ph ph-list text-2xl" id="hamburger-icon"></i>
+    </button>
+
+    <!-- Fullscreen Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-[95] bg-black/90 backdrop-blur-lg flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
+        <ul class="text-center space-y-8 font-nanum text-4xl">
+            <li><a href="#home" onclick="toggleMenu()" class="menu-item block">Home</a></li>
+            <li><a href="#couple" onclick="toggleMenu()" class="menu-item block">Mempelai</a></li>
+            <li><a href="#event" onclick="toggleMenu()" class="menu-item block">Informasi Acara</a></li>
+            <li><a href="#gallery" onclick="toggleMenu()" class="menu-item block">Galeri Foto</a></li>
+            <li><a href="#gift" onclick="toggleMenu()" class="menu-item block">Wedding Gift</a></li>
+            <li><a href="#rsvp" onclick="toggleMenu()" class="menu-item block">RSVP</a></li>
+        </ul>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">Berhasil disalin!</div>
+
+    <!-- COVER PAGE -->
+    <div id="cover-page" class="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-6 transition-opacity duration-1000">
+        <div class="glass-panel p-10 md:p-14 w-full max-w-md" data-aos="zoom-in" data-aos-duration="1500">
+            <h3 class="text-xs md:text-sm tracking-[0.3em] uppercase mb-5 opacity-80">The Wedding Of</h3>
+            <h1 class="font-nanum text-6xl md:text-7xl mb-8 text-white drop-shadow-md">Romeo Juliet</h1>
+            <p class="mb-6 font-light text-sm">Dear / Kepada Yth.</p>
+            <div class="font-bold text-base mb-6 bg-black/30 py-2 px-6 rounded-lg inline-block border border-white/20">
+                Tamu Undangan
+            </div>
+            <p class="text-[10px] md:text-xs mb-10 opacity-75 font-light">*Mohon maaf bila ada kesalahan penulisan nama/gelar</p>
+            
+            <button id="btn-buka" onclick="bukaUndangan()" class="glass-button text-white px-8 py-3 rounded-full flex items-center justify-center gap-2 mx-auto w-full group text-sm font-semibold tracking-wide">
+                <i class="ph ph-envelope-open text-lg group-hover:scale-110 transition-transform"></i>
+                Buka Undangan
+            </button>
+        </div>
+    </div>
+
+    <!-- BACKGROUND VIDEO (Langsung autoplay & opacity full di background) -->
+    <video id="bg-video" autoplay loop muted playsinline preload="auto" class="fixed top-0 left-0 w-screen h-screen object-cover z-[-2] opacity-100 pointer-events-none">
+        <source src="asset/video/sample.mp4" type="video/mp4">
+        <source src="main/asset/video/sample.mp4" type="video/mp4">
+        Browser Anda tidak mendukung tag video.
+    </video>
+    
+    <!-- OVERLAY (Dipergelap sedikit agar teks terbaca jelas karena kotak background dihilangkan) -->
+    <div class="fixed inset-0 bg-black/60 z-[-1]"></div>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="hidden opacity-0 transition-opacity duration-1000 w-full max-w-4xl mx-auto px-6 pb-24">
+
+        <!-- SECTION: HERO -->
+        <section id="home" class="min-h-screen flex flex-col items-center justify-center text-center pt-24 pb-12">
+            <h3 data-aos="fade-down" class="text-sm tracking-[0.4em] uppercase mb-8 font-light">Our Wedding</h3>
+            
+            <h1 data-aos="zoom-in" data-aos-delay="200" class="font-nanum text-[7rem] sm:text-[10rem] md:text-[14rem] lg:text-[18rem] mb-10 drop-shadow-2xl text-white leading-[0.75] flex flex-col">
+                <span>Romeo</span>
+                <span>Juliet</span>
+            </h1>
+            
+            <p data-aos="fade-up" data-aos-delay="400" class="text-base md:text-lg font-light tracking-[0.2em] mt-4">12 . 12 . 2026</p>
+            
+            <div data-aos="fade-up" data-aos-delay="600" class="mt-24 animate-bounce">
+                <i class="ph ph-caret-down text-3xl opacity-70"></i>
+            </div>
+        </section>
+
+        <!-- SECTION: PEMBUKA & MEMPELAI -->
+        <section id="couple" class="py-20 text-center">
+            <div data-aos="fade-up" class="glass-panel p-8 md:p-12 mb-16 max-w-2xl mx-auto">
+                <i class="ph ph-hands-praying text-4xl mb-6 text-white/80 mx-auto block"></i>
+                <p class="font-bold text-xl md:text-2xl mb-5 font-nanum">Assalamu'alaikum Warahmatullahi Wabarakatuh</p>
+                <p class="text-sm font-light leading-loose opacity-90">
+                    Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Tanpa mengurangi rasa hormat, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami.
+                    <br><br>
+                    <span class="italic opacity-80">It is with joyful hearts that we invite you to share in our happiness as we celebrate our wedding:</span>
+                </p>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-center items-center gap-12 md:gap-24 mt-16">
+                <!-- Mempelai Pria -->
+                <div data-aos="fade-right" class="flex flex-col items-center">
+                    <div class="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden border border-white/50 p-1 mb-6 shadow-2xl">
+                        <img src="asset/image/bride/man.jpg" onerror="this.src='https://placehold.co/400x400/222/fff?text=R'" alt="Romeo" class="w-full h-full object-cover rounded-full">
+                    </div>
+                    <h2 class="font-nanum text-4xl md:text-5xl mb-3">Romeo Montague</h2>
+                    <p class="text-xs md:text-sm font-light opacity-80 mb-1">Putra pertama dari <span class="italic">/ Eldest son of</span></p>
+                    <p class="text-xs md:text-sm font-semibold">Bapak Montague & Ibu Lady Montague</p>
+                </div>
+
+                <div data-aos="zoom-in" class="font-nanum text-5xl md:text-6xl text-white/50">&</div>
+
+                <!-- Mempelai Wanita -->
+                <div data-aos="fade-left" class="flex flex-col items-center">
+                    <div class="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden border border-white/50 p-1 mb-6 shadow-2xl">
+                        <img src="asset/image/bride/woman.jpg" onerror="this.src='https://placehold.co/400x400/222/fff?text=J'" alt="Juliet" class="w-full h-full object-cover rounded-full">
+                    </div>
+                    <h2 class="font-nanum text-4xl md:text-5xl mb-3">Juliet Capulet</h2>
+                    <p class="text-xs md:text-sm font-light opacity-80 mb-1">Putri kedua dari <span class="italic">/ Second daughter of</span></p>
+                    <p class="text-xs md:text-sm font-semibold">Bapak Capulet & Ibu Lady Capulet</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: INFORMASI ACARA -->
+        <section id="event" class="py-20 text-center">
+            <h2 data-aos="fade-up" class="font-nanum text-4xl md:text-5xl mb-16">Save The Date</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-10">
+                <!-- Akad -->
+                <div data-aos="fade-up" data-aos-delay="100" class="glass-panel p-8 md:p-10 relative overflow-hidden group">
+                    <h3 class="font-nanum text-3xl mb-6 border-b border-white/30 pb-4 inline-block px-8">Akad Nikah <br><span class="text-sm font-nunito italic font-light opacity-70">Holy Matrimony</span></h3>
+                    <div class="space-y-5 text-sm font-light">
+                        <p class="flex items-center justify-center gap-3"><i class="ph ph-calendar-blank text-lg"></i> Sabtu, 12 Desember 2026</p>
+                        <p class="flex items-center justify-center gap-3"><i class="ph ph-clock text-lg"></i> 08.00 WIB - Selesai</p>
+                        <p class="flex items-start justify-center gap-3 mt-6 text-center leading-relaxed">
+                            <span>Masjid Agung Nusantara<br>Jl. Kenangan Indah No. 1, Jakarta</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Resepsi -->
+                <div data-aos="fade-up" data-aos-delay="200" class="glass-panel p-8 md:p-10 relative overflow-hidden group">
+                    <h3 class="font-nanum text-3xl mb-6 border-b border-white/30 pb-4 inline-block px-8">Resepsi <br><span class="text-sm font-nunito italic font-light opacity-70">Wedding Reception</span></h3>
+                    <div class="space-y-5 text-sm font-light">
+                        <p class="flex items-center justify-center gap-3"><i class="ph ph-calendar-blank text-lg"></i> Sabtu, 12 Desember 2026</p>
+                        <p class="flex items-center justify-center gap-3"><i class="ph ph-clock text-lg"></i> 11.00 WIB - 14.00 WIB</p>
+                        <p class="flex items-start justify-center gap-3 mt-6 text-center leading-relaxed">
+                            <span>Grand Ballroom Hotel Bintang<br>Jl. Bahagia Selalu No. 99, Jakarta</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Peta -->
+            <div data-aos="zoom-in" data-aos-delay="300" class="mt-20">
+                <a href="https://maps.google.com" target="_blank" class="glass-button inline-flex items-center gap-3 px-10 py-4 rounded-full text-xs font-semibold uppercase tracking-widest">
+                    <i class="ph ph-map-trifold text-xl transition-colors"></i> Open in Google Maps
+                </a>
+            </div>
+        </section>
+
+        <!-- SECTION: GALERI (Kolase scroll otomatis) -->
+        <section id="gallery" class="py-16 text-center overflow-hidden">
+            <h2 data-aos="fade-up" class="font-nanum text-5xl md:text-6xl mb-10">Our Moments</h2>
+            
+            <div data-aos="fade-up" class="gallery-container">
+                <div class="gallery-track" id="auto-gallery-track">
+                    <!-- Foto akan dimuat secara otomatis oleh JavaScript dari folder asset/image/galery/ -->
+                </div>
+            </div>
+            <p class="text-xs opacity-60 mt-4 font-light italic">*Geser atau biarkan berjalan otomatis / Swipe or let it auto-scroll</p>
+        </section>
+
+        <!-- SECTION: ANGPAO / AMPLOP DIGITAL -->
+        <section id="gift" class="py-20 text-center">
+            <div data-aos="fade-up" class="glass-panel p-10 md:p-14 max-w-3xl mx-auto">
+                <i class="ph ph-gift text-4xl mb-6 mx-auto block text-white/90"></i>
+                <h2 class="font-nanum text-4xl md:text-5xl mb-8">Wedding Gift</h2>
+                <p class="text-sm font-light mb-12 opacity-90 leading-loose max-w-lg mx-auto">
+                    Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun, jika Anda bermaksud memberikan tanda kasih, dapat melalui fitur di bawah ini:<br>
+                    <span class="italic opacity-80 mt-2 block">Your presence and prayers are the greatest gift. However, if you wish to give a blessing, you may use the feature below:</span>
+                </p>
+                <div class="flex flex-col md:flex-row justify-center gap-12">
+                    <!-- Rekening 1 -->
+                    <div class="p-6 w-full md:w-1/2">
+                        <i class="ph ph-bank text-3xl mb-3 opacity-80"></i>
+                        <p class="font-semibold text-sm tracking-widest opacity-80">BCA</p>
+                        <p class="text-3xl font-nanum tracking-[0.15em] my-3" id="rek-bca">1234 5678 90</p>
+                        <p class="text-xs mb-8 opacity-70">a.n Romeo Montague</p>
+                        <button onclick="copyText('rek-bca')" class="glass-button mx-auto text-xs px-8 py-2.5 rounded-full flex items-center justify-center gap-2">
+                            <i class="ph ph-copy transition-colors"></i> Salin Rekening
+                        </button>
+                    </div>
+
+                    <!-- Rekening 2 -->
+                    <div class="p-6 w-full md:w-1/2">
+                        <i class="ph ph-wallet text-3xl mb-3 opacity-80"></i>
+                        <p class="font-semibold text-sm tracking-widest opacity-80">MANDIRI</p>
+                        <p class="text-3xl font-nanum tracking-[0.15em] my-3" id="rek-mandiri">0987 6543 21</p>
+                        <p class="text-xs mb-8 opacity-70">a.n Juliet Capulet</p>
+                        <button onclick="copyText('rek-mandiri')" class="glass-button mx-auto text-xs px-8 py-2.5 rounded-full flex items-center justify-center gap-2">
+                            <i class="ph ph-copy transition-colors"></i> Salin Rekening
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: RSVP & REVIEW -->
+        <section id="rsvp" class="py-20 text-center">
+            <h2 data-aos="fade-up" class="font-nanum text-4xl md:text-5xl mb-12">RSVP & Wishes</h2>
+            
+            <div data-aos="fade-up" class="glass-panel p-8 md:p-10 mb-16 text-left max-w-xl mx-auto">
+                <form id="rsvp-form" class="space-y-8">
+                    <div>
+                        <input type="text" id="rsvp-name" required class="w-full bg-transparent border-0 border-b border-white/50 px-2 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white transition-colors text-center text-sm" placeholder="Nama Lengkap / Full Name">
+                    </div>
+                    <div>
+                        <select id="rsvp-status" class="w-full bg-transparent border-0 border-b border-white/50 px-2 py-3 text-white focus:outline-none focus:border-white transition-colors appearance-none text-center text-sm opacity-80">
+                            <option value="Hadir" class="text-black">Pasti Hadir / Will Attend</option>
+                            <option value="Tidak Hadir" class="text-black">Maaf, Tidak Bisa / Cannot Attend</option>
+                            <option value="Masih Ragu" class="text-black">Masih Ragu / Tentative</option>
+                        </select>
+                    </div>
+                    <div>
+                        <textarea id="rsvp-message" rows="2" required class="w-full bg-transparent border-0 border-b border-white/50 px-2 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white transition-colors text-center text-sm resize-none" placeholder="Tuliskan ucapan & doa restu... / Write your wishes..."></textarea>
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit" class="glass-button w-full py-3 rounded-full text-sm tracking-widest uppercase flex justify-center items-center gap-2">
+                            <i class="ph ph-paper-plane-right transition-colors"></i> Kirim / Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Review RSVP List -->
+            <div data-aos="fade-up" class="text-left mt-12 max-w-2xl mx-auto">
+                <h3 class="font-nanum text-3xl mb-8 text-center border-b border-white/20 pb-4 inline-block mx-auto flex items-center justify-center gap-3">
+                    <i class="ph ph-chat-teardrop-text align-middle"></i>Daftar Ucapan
+                </h3>
+                
+                <div id="rsvp-reviews" class="space-y-6 max-h-[400px] overflow-y-auto pr-3 mt-8" style="scrollbar-width: thin;">
+                    <!-- Data Dummy Awal -->
+                    <div class="border-b border-white/10 pb-5">
+                        <div class="flex items-center gap-4 mb-3">
+                            <div class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center font-nanum text-xl">B</div>
+                            <div>
+                                <h4 class="font-bold text-sm tracking-wide">Budi Santoso <span class="bg-white text-black text-[10px] px-2 py-0.5 rounded-full ml-2 font-bold uppercase">Hadir</span></h4>
+                                <p class="text-xs opacity-50 mt-0.5">Baru saja</p>
+                            </div>
+                        </div>
+                        <p class="text-sm font-light pl-14 opacity-90">Selamat menempuh hidup baru! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.</p>
+                    </div>
+                    
+                    <div class="border-b border-white/10 pb-5">
+                        <div class="flex items-center gap-4 mb-3">
+                            <div class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center font-nanum text-xl">S</div>
+                            <div>
+                                <h4 class="font-bold text-sm tracking-wide">Siti Aminah <span class="bg-white text-black text-[10px] px-2 py-0.5 rounded-full ml-2 font-bold uppercase">Hadir</span></h4>
+                                <p class="text-xs opacity-50 mt-0.5">2 jam yang lalu</p>
+                            </div>
+                        </div>
+                        <p class="text-sm font-light pl-14 opacity-90">Lancar-lancar sampai hari H ya Romeo & Juliet. Can't wait to see you on your big day!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: PENUTUP -->
+        <section id="closing" class="min-h-screen flex flex-col items-center justify-center text-center">
+            <h2 data-aos="zoom-in" class="font-nanum text-5xl md:text-6xl mb-8">Thank You</h2>
+            <p data-aos="fade-up" class="text-sm font-light mb-10 max-w-lg mx-auto opacity-90 leading-loose">
+                Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.
+                <br>
+                <span class="italic opacity-80">Your presence will make our day complete and fill our hearts with joy.</span>
+            </p>
+            <p data-aos="fade-up" data-aos-delay="200" class="font-bold text-xl md:text-2xl mb-16 font-nanum">Wassalamu'alaikum Warahmatullahi Wabarakatuh</p>
+            
+            <div data-aos="fade-up" data-aos-delay="300" class="mt-8">
+                <p class="text-xs tracking-widest font-light opacity-80 mb-4 uppercase">Kami yang berbahagia</p>
+                <h3 class="font-nanum text-7xl md:text-8xl">Romeo Juliet</h3>
+            </div>
+        </section>
+
+        <!-- WATERMARK / FOOTER -->
+        <footer class="text-center pb-8">
+            <p class="text-[10px] md:text-xs font-light tracking-[0.2em] opacity-50 uppercase">
+                Project by <span class="font-bold opacity-100">Draftgraphy</span>
+            </p>
+        </footer>
+
+    </main>
+
+    <!-- Script Utama -->
+    <script>
+        // Inisialisasi AOS (Animate On Scroll)
+        AOS.init({
+            once: false,
+            offset: 50,
+            duration: 800,
+            easing: 'ease-out-cubic',
+        });
+
+        // -----------------------------------------------------
+        // Audio Player (Menggunakan HTML5 Audio - MP3)
+        // -----------------------------------------------------
+        const bgMusic = document.getElementById('bg-music');
+        let isAudioPlaying = false;
+
+        // Toggle (Play/Pause) Audio Musik
+        function toggleAudio() {
+            const icon = document.getElementById('audio-icon');
+            if (isAudioPlaying) {
+                bgMusic.pause();
+                icon.classList.remove('animate-spin-slow');
+                icon.classList.remove('ph-music-notes');
+                icon.classList.add('ph-speaker-slash');
+                isAudioPlaying = false;
+            } else {
+                bgMusic.play();
+                icon.classList.add('animate-spin-slow');
+                icon.classList.remove('ph-speaker-slash');
+                icon.classList.add('ph-music-notes');
+                isAudioPlaying = true;
+            }
+        }
+
+        // -----------------------------------------------------
+        // Mobile Menu Toggle
+        // -----------------------------------------------------
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('hamburger-icon');
+            
+            if (menu.classList.contains('opacity-0')) {
+                // Buka menu
+                menu.classList.remove('opacity-0', 'pointer-events-none');
+                icon.classList.remove('ph-list');
+                icon.classList.add('ph-x');
+            } else {
+                // Tutup menu
+                menu.classList.add('opacity-0', 'pointer-events-none');
+                icon.classList.remove('ph-x');
+                icon.classList.add('ph-list');
+            }
+        }
+
+        const video = document.getElementById('bg-video');
+
+        // Memastikan video langsung diputar sejak awal dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            if (video) {
+                video.muted = true;
+                video.playsInline = true;
+                video.play().catch(err => {
+                    console.log("Autoplay awal dicegah browser, akan diputar saat tombol diklik:", err);
+                });
+            }
+        });
+
+        function bukaUndangan() {
+            const cover = document.getElementById('cover-page');
+            const mainContent = document.getElementById('main-content');
+            const audioBtn = document.getElementById('audio-btn');
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+
+            // Paksa pemutaran ulang jika sebelumnya sempat terhenti oleh browser
+            if (video && video.paused) {
+                video.muted = true;
+                video.play();
+            }
+
+            // Putar Audio MP3
+            if (bgMusic) {
+                bgMusic.play().then(() => {
+                    isAudioPlaying = true;
+                    document.getElementById('audio-icon').classList.add('animate-spin-slow');
+                }).catch(err => {
+                    console.log("Audio autoplay diblokir:", err);
+                });
+            }
+
+            // Tampilkan tombol interaktif
+            audioBtn.classList.remove('hidden');
+            hamburgerBtn.classList.remove('hidden');
+
+            // Tampilkan Main Content & hilangkan Cover secara transparan (fade out)
+            mainContent.classList.remove('hidden');
+
+            cover.style.opacity = '0';
+            
+            setTimeout(() => {
+                cover.style.display = 'none';
+                mainContent.style.opacity = '1';
+                
+                // Refresh animasi AOS saat halaman dibuka
+                AOS.refresh();
+                
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }, 800);
+        }
+
+        // Fitur Copy Rekening (Tanpa alert)
+        function copyText(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy).then(showToast);
+            } else {
+                let textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast();
+                } catch (err) {
+                    console.error('Fallback: Gagal menyalin', err);
+                }
+                textArea.remove();
+            }
+        }
+
+        // Tampilkan Custom Toast
+        function showToast() {
+            const toast = document.getElementById("toast");
+            toast.classList.add("show");
+            setTimeout(function(){ 
+                toast.classList.remove("show"); 
+            }, 3000);
+        }
+
+        // Logika Submit RSVP
+        const rsvpForm = document.getElementById('rsvp-form');
+        const rsvpReviews = document.getElementById('rsvp-reviews');
+
+        rsvpForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('rsvp-name').value;
+            const status = document.getElementById('rsvp-status').value;
+            const message = document.getElementById('rsvp-message').value;
+
+            const initial = name.charAt(0).toUpperCase();
+            const time = "Baru saja";
+
+            const newReview = document.createElement('div');
+            newReview.className = 'border-b border-white/10 pb-5 animate-pulse';
+            newReview.innerHTML = `
+                <div class="flex items-center gap-4 mb-3">
+                    <div class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center font-nanum text-xl">${initial}</div>
+                    <div>
+                        <h4 class="font-bold text-sm tracking-wide">${name} <span class="bg-white text-black text-[10px] px-2 py-0.5 rounded-full ml-2 font-bold uppercase">${status}</span></h4>
+                        <p class="text-xs opacity-50 mt-0.5">${time}</p>
+                    </div>
+                </div>
+                <p class="text-sm font-light pl-14 opacity-90">${message}</p>
+            `;
+
+            rsvpReviews.prepend(newReview);
+
+            setTimeout(() => {
+                newReview.classList.remove('animate-pulse');
+            }, 1000);
+
+            document.getElementById('toast').innerText = "Ucapan berhasil dikirim!";
+            showToast();
+            
+            setTimeout(() => {
+                document.getElementById('toast').innerText = "Berhasil disalin!";
+            }, 3500);
+
+            rsvpForm.reset();
+        });
+
+        // -----------------------------------------------------
+        // Auto-Loader Galeri Foto
+        // -----------------------------------------------------
+        window.addEventListener('DOMContentLoaded', () => {
+            const galleryTrack = document.getElementById('auto-gallery-track');
+            const folderPath = 'asset/image/galery/';
+            const extension = '.jpg'; // Pastikan foto Anda berformat .jpg
+            
+            let imageIndex = 1;
+            let loadedImages = [];
+            const maxImagesLimit = 50; // Batas maksimal foto untuk mencegah infinite loop
+
+            function loadNextImage() {
+                if (imageIndex > maxImagesLimit) {
+                    finalizeGallery();
+                    return;
+                }
+
+                let img = new Image();
+                img.src = `${folderPath}${imageIndex}${extension}`;
+                img.className = "gallery-item";
+                img.alt = `Galeri ${imageIndex}`;
+                
+                // Memberikan variasi lebar agar terlihat estetik dan dinamis
+                const widths = [250, 350, 300, 320]; 
+                img.style.width = widths[(imageIndex - 1) % 4] + "px";
+
+                img.onload = function() {
+                    // Jika berhasil dimuat, simpan ke array dan lanjut cari gambar berikutnya
+                    loadedImages.push(img.cloneNode());
+                    imageIndex++;
+                    loadNextImage(); 
+                };
+
+                img.onerror = function() {
+                    // Jika gagal (file tidak ada), hentikan pencarian dan render galeri
+                    finalizeGallery();
+                };
+            }
+
+            function finalizeGallery() {
+                if(loadedImages.length === 0) {
+                    // Fallback jika tidak ada foto sama sekali di folder
+                    galleryTrack.innerHTML = '<p class="text-sm opacity-50 w-full text-center tracking-widest">Belum ada foto di folder galeri.</p>';
+                    return;
+                }
+                
+                // 1. Masukkan set foto asli
+                loadedImages.forEach(img => galleryTrack.appendChild(img));
+                
+                // 2. Masukkan set foto duplikat untuk efek endless looping scroll
+                loadedImages.forEach(img => {
+                    let clone = img.cloneNode();
+                    galleryTrack.appendChild(clone);
+                });
+
+                // Sesuaikan kecepatan animasi berdasarkan jumlah foto (5 detik per foto)
+                const animDuration = loadedImages.length * 5; 
+                galleryTrack.style.animationDuration = `${animDuration}s`;
+            }
+
+            // Mulai proses auto-load
+            if(galleryTrack) {
+                loadNextImage();
+            }
+        });
+    </script>
+</body>
+</html>
