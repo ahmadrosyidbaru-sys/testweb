@@ -130,20 +130,14 @@
 
         /* Continuous Horizontal Scroll for Gallery */
         .gallery-container {
-            display: flex; overflow: hidden; white-space: nowrap; width: 100%; position: relative; padding: 10px 0;
+            display: flex; overflow-x: auto; overflow-y: hidden; white-space: nowrap; width: 100%; position: relative; padding: 10px 0;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
         }
-        .gallery-track { display: flex; gap: 1rem; animation: scrollGallery 25s linear infinite; }
-        .gallery-container:hover .gallery-track { animation-play-state: paused; }
-        .gallery-item {
-            width: 200px; height: 280px; object-fit: cover; border-radius: 1rem; flex-shrink: 0;
-            border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
-            mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+        .gallery-container::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
         }
-        @keyframes scrollGallery {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-200px * 4 - 1rem * 4)); }
-        }
+        .gallery-track { display: flex; gap: 1rem; width: max-content; }
 
         #toast {
             position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
@@ -913,7 +907,10 @@ function doPost(e) {
                 return;
             }
 
-            list.forEach(item => {
+            // Hanya tampilkan 5 ucapan terbaru
+            const displayList = list.slice(0, 5);
+
+            displayList.forEach(item => {
                 const initial = item.name ? item.name.charAt(0).toUpperCase() : '?';
                 
                 // Format relative time
@@ -1097,6 +1094,7 @@ function doPost(e) {
         // --- GALERI AUTO-LOADER ---
         function initGallery() {
             const galleryTrack = document.getElementById('auto-gallery-track');
+            const galleryContainer = document.querySelector('.gallery-container');
             const folderPath = 'asset/image/galery/';
             const extension = '.jpg';
             let imageIndex = 1;
@@ -1121,9 +1119,41 @@ function doPost(e) {
                     galleryTrack.innerHTML = '<p class="text-[10px] opacity-50 w-full text-center">Belum ada foto.</p>';
                     return;
                 }
-                loadedImages.forEach(img => galleryTrack.appendChild(img));
-                loadedImages.forEach(img => galleryTrack.appendChild(img.cloneNode()));
-                galleryTrack.style.animationDuration = `${loadedImages.length * 5}s`;
+                
+                // Bungkus gambar dalam grup untuk mempermudah perhitungan loop scroll
+                const group1 = document.createElement('div');
+                group1.className = 'flex gap-4'; 
+                loadedImages.forEach(img => group1.appendChild(img));
+                
+                const group2 = group1.cloneNode(true);
+                
+                galleryTrack.innerHTML = '';
+                galleryTrack.appendChild(group1);
+                galleryTrack.appendChild(group2);
+                
+                // Logika Auto Scroll & Swipe Native
+                let autoScrollInterval;
+                function startScroll() {
+                    autoScrollInterval = setInterval(() => {
+                        if (galleryContainer) {
+                            galleryContainer.scrollLeft += 1;
+                            // Reset jika melewati grup pertama (ukuran grup + jarak gap 1rem/16px)
+                            if (galleryContainer.scrollLeft >= group1.offsetWidth + 16) { 
+                                galleryContainer.scrollLeft = 0;
+                            }
+                        }
+                    }, 20); 
+                }
+                
+                function stopScroll() { clearInterval(autoScrollInterval); }
+
+                startScroll();
+                
+                // Berhenti otomatis jika pengguna mencoba menyentuh atau menggeser
+                galleryContainer.addEventListener('mouseenter', stopScroll);
+                galleryContainer.addEventListener('mouseleave', startScroll);
+                galleryContainer.addEventListener('touchstart', stopScroll, {passive: true});
+                galleryContainer.addEventListener('touchend', startScroll);
             }
             if (galleryTrack) loadNext();
         }
@@ -1138,6 +1168,16 @@ function doPost(e) {
             }
             initGallery();
             initApp();
+            
+            // Hentikan musik saat tab browser tidak aktif / diminimize
+            document.addEventListener("visibilitychange", () => {
+                const bgMusic = document.getElementById('bg-music');
+                if (document.hidden) {
+                    if (bgMusic && !bgMusic.paused) bgMusic.pause();
+                } else {
+                    if (isAudioPlaying && bgMusic && bgMusic.paused) bgMusic.play().catch(e => {});
+                }
+            });
         });
 
     </script>
