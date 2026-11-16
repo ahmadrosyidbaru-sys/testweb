@@ -304,10 +304,27 @@
                     </div>
                 </div>
 
-                <div class="pt-4 border-t border-white/10 flex gap-4">
-                    <button type="submit" id="btn-save-config" class="w-full py-3 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition">Simpan Perubahan</button>
+                <div class="pt-4 border-t border-white/10 flex gap-3">
+                    <button type="button" onclick="openRsvpManager()" class="w-1/3 py-3 rounded-lg border border-white/30 hover:bg-white/10 transition text-[10px] md:text-xs font-bold flex items-center justify-center gap-2">
+                        <i class="ph ph-chat-teardrop-text text-base md:text-lg"></i> Atur RSVP
+                    </button>
+                    <button type="submit" id="btn-save-config" class="w-2/3 py-3 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition">Simpan Perubahan</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- RSVP Manager Modal (Popup Hapus Ucapan) -->
+    <div id="rsvp-manager-modal" class="fixed inset-0 z-[250] hidden modal-overlay flex items-center justify-center px-4 py-10">
+        <div class="bg-slate-900 border border-white/20 p-6 rounded-2xl max-w-lg w-full max-h-full flex flex-col shadow-2xl text-white">
+            <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-4 flex-shrink-0">
+                <h3 class="text-lg font-bold font-nunito flex items-center gap-2"><i class="ph ph-list-dashes"></i> Manajemen RSVP</h3>
+                <button type="button" onclick="closeRsvpManager()" class="text-white/50 hover:text-white"><i class="ph ph-x text-2xl"></i></button>
+            </div>
+            <p class="text-[10px] md:text-xs opacity-70 mb-4 flex-shrink-0">Daftar seluruh ucapan tamu. Hapus ucapan yang dirasa kurang pantas.</p>
+            <div id="rsvp-manager-list" class="overflow-y-auto custom-scroll flex-1 space-y-2 pr-2 max-h-[60vh]">
+                <!-- RSVP List will be injected here -->
+            </div>
         </div>
     </div>
 
@@ -612,6 +629,12 @@ function doPost(e) {
     } else if (payload.action === 'addRsvp') {
       if(!data.rsvp) data.rsvp = [];
       data.rsvp.push(payload.rsvpData);
+    } else if (payload.action === 'deleteRsvp') {
+      if(data.rsvp) {
+        data.rsvp = data.rsvp.filter(function(item) {
+          return item.timestamp !== payload.timestamp;
+        });
+      }
     }
     
     file.setContent(JSON.stringify(data));
@@ -632,7 +655,7 @@ function doPost(e) {
     -->
         <script>
         // [!] URL WEB APP GOOGLE APPS SCRIPT ANDA
-        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHzD1vyH_mp0_z3En1HY2eRJcXq4xmKpflH7-meqjOywNdnycolfx3x_EIQv5Fruf0VQ/exec";
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGLUSZIyqd2CQpgHhgO8tIsT0qEDM6BFcKfHm3uq_f3MjkvJ8I4-VhNfszLcHGoIu-4w/exec";
 
         // Konfigurasi Default Internal
         let configData = {
@@ -1021,6 +1044,77 @@ function doPost(e) {
         window.closeModals = function() {
             document.getElementById('password-modal').classList.add('hidden');
             document.getElementById('config-modal').classList.add('hidden');
+            document.getElementById('rsvp-manager-modal').classList.add('hidden');
+        };
+
+        window.openRsvpManager = function() {
+            document.getElementById('rsvp-manager-modal').classList.remove('hidden');
+            renderRsvpManagerList();
+        };
+
+        window.closeRsvpManager = function() {
+            document.getElementById('rsvp-manager-modal').classList.add('hidden');
+        };
+
+        function renderRsvpManagerList() {
+            const container = document.getElementById('rsvp-manager-list');
+            container.innerHTML = '';
+            
+            if (rsvpDataList.length === 0) {
+                container.innerHTML = '<p class="text-center text-xs opacity-50 py-10">Belum ada data RSVP tersimpan.</p>';
+                return;
+            }
+
+            rsvpDataList.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center bg-black/30 p-3 rounded-lg border border-white/10 mb-2';
+                
+                const diff = Date.now() - item.timestamp;
+                let timeStr = "Baru saja";
+                if (diff > 86400000) timeStr = Math.floor(diff/86400000) + " hari lalu";
+                else if (diff > 3600000) timeStr = Math.floor(diff/3600000) + " jam lalu";
+                else if (diff > 60000) timeStr = Math.floor(diff/60000) + " menit lalu";
+
+                div.innerHTML = `
+                    <div class="text-left w-[85%] pr-2">
+                        <p class="font-bold text-xs">${escapeHTML(item.name)} <span class="bg-white text-black text-[8px] px-1.5 py-0.5 rounded-full ml-1 font-bold uppercase">${escapeHTML(item.status)}</span></p>
+                        <p class="text-[9px] opacity-50 mt-0.5">${timeStr}</p>
+                        <p class="text-[10px] opacity-90 mt-1 truncate">${escapeHTML(item.message)}</p>
+                    </div>
+                    <button type="button" onclick="deleteRsvpItem(${item.timestamp})" class="w-8 h-8 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white flex justify-center items-center transition border border-red-500/50 flex-shrink-0 cursor-pointer">
+                        <i class="ph ph-trash text-lg"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        window.deleteRsvpItem = async function(timestamp) {
+            if(!confirm("Apakah Anda yakin ingin menghapus ucapan ini secara permanen?")) return;
+
+            // Hapus secara lokal (Optimistic Update) agar UI langsung berubah
+            rsvpDataList = rsvpDataList.filter(r => r.timestamp !== timestamp);
+            renderRsvpManagerList();
+            renderRsvps(rsvpDataList);
+            window.showToast("Menghapus ucapan...");
+
+            try {
+                const res = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'deleteRsvp', timestamp: timestamp })
+                });
+                const result = await res.json();
+                if(result.success) {
+                    window.showToast("Ucapan berhasil dihapus!");
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch(err) {
+                console.error(err);
+                window.showToast("Gagal menghapus ke server. Periksa script/koneksi.");
+            }
         };
 
         window.showToast = function(msg) {
