@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undangan Pernikahan - Romeo & Juliet</title>
+    <title>Undangan Pernikahan</title>
 
     <!-- Google Fonts: Nanum Pen Script & Nunito -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,26 +46,66 @@
             background-color: transparent;
             color: #ffffff;
             scroll-behavior: smooth;
+            transition: color 0.5s ease;
+        }
+
+        /* TEMA TERANG (LIGHT MODE) OVERRIDES */
+        body.theme-light {
+            color: #0f172a;
+        }
+        body.theme-light .text-white,
+        body.theme-light .text-white\/50,
+        body.theme-light .text-white\/80,
+        body.theme-light .text-white\/90 {
+            color: #0f172a !important;
+        }
+        body.theme-light .border-white\/10,
+        body.theme-light .border-white\/20,
+        body.theme-light .border-white\/30,
+        body.theme-light .border-white\/50 {
+            border-color: rgba(0,0,0,0.2) !important;
+        }
+        body.theme-light .bg-black\/20,
+        body.theme-light .bg-black\/30,
+        body.theme-light .bg-black\/60,
+        body.theme-light .bg-black\/90 {
+            background-color: rgba(255,255,255,0.85) !important;
+        }
+        body.theme-light .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0, 0, 0, 0.15) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        body.theme-light .glass-button {
+            border-color: #0f172a !important;
+            color: #0f172a !important;
+        }
+        body.theme-light .glass-button:hover {
+            background: #0f172a !important;
+            color: #ffffff !important;
+        }
+        body.theme-light input, body.theme-light select, body.theme-light textarea {
+            color: #0f172a !important;
+            border-color: rgba(0,0,0,0.3) !important;
+        }
+        body.theme-light input::placeholder, body.theme-light textarea::placeholder {
+            color: rgba(15,23,42,0.5) !important;
+        }
+        body.theme-light #toast {
+            background: rgba(0,0,0,0.9);
+            color: #fff;
         }
 
         /* Hide scrollbar for aesthetic */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #000;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.3);
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.3); border-radius: 10px; }
 
-        /* Glassmorphism / Clean Panels */
         .glass-panel {
-            /* Hanya menggunakan outline putih rounded, tanpa blur dan background */
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 1.5rem;
+            transition: all 0.5s ease;
         }
         
         .glass-button {
@@ -79,289 +119,342 @@
             color: #000000;
             border-color: #ffffff;
         }
-        .glass-button:hover i {
-            color: #000000;
-        }
 
-        /* Cover Video Overlay Setup */
         #cover-page {
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)); /* Gradasi transparan agar teks cover terbaca di atas video */
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+            width: 100vw; height: 100vh; height: 100dvh;
+        }
+        body.theme-light #cover-page {
+            background: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.8));
         }
 
         /* Continuous Horizontal Scroll for Gallery */
         .gallery-container {
-            display: flex;
-            overflow: hidden;
-            white-space: nowrap;
-            width: 100%;
-            position: relative;
-            padding: 20px 0;
+            display: flex; overflow: hidden; white-space: nowrap; width: 100%; position: relative; padding: 10px 0;
         }
-        .gallery-track {
-            display: flex;
-            gap: 1.5rem;
-            animation: scrollGallery 25s linear infinite;
-        }
-        .gallery-container:hover .gallery-track {
-            animation-play-state: paused;
-        }
+        .gallery-track { display: flex; gap: 1rem; animation: scrollGallery 25s linear infinite; }
+        .gallery-container:hover .gallery-track { animation-play-state: paused; }
         .gallery-item {
-            width: 250px;
-            height: 350px;
-            object-fit: cover;
-            border-radius: 1rem;
-            flex-shrink: 0;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            /* Efek gradasi transparan di bagian bawah foto */
+            width: 200px; height: 280px; object-fit: cover; border-radius: 1rem; flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
             mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
         }
-
         @keyframes scrollGallery {
             0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-250px * 4 - 1.5rem * 4)); }
+            100% { transform: translateX(calc(-200px * 4 - 1rem * 4)); }
         }
 
-        /* Custom Notification Toast */
         #toast {
-            position: fixed;
-            bottom: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255,255,255,0.9);
-            color: #000;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-family: 'Nunito', sans-serif;
-            font-weight: 600;
-            transition: bottom 0.4s ease;
-            z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            background: rgba(255,255,255,0.9); color: #000; padding: 10px 20px; border-radius: 50px;
+            font-family: 'Nunito', sans-serif; font-weight: 600; transition: bottom 0.4s ease; z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-size: 0.875rem;
         }
-        #toast.show {
-            bottom: 30px;
-        }
+        #toast.show { bottom: 30px; }
 
-        /* Menu & Audio Button Animations */
-        .animate-spin-slow {
-            animation: spin 4s linear infinite;
-        }
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-        .menu-item {
-            transition: all 0.3s ease;
-        }
-        .menu-item:hover {
-            color: rgba(255,255,255,0.7);
-            letter-spacing: 0.1em;
+        .animate-spin-slow { animation: spin 4s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        /* Modal & UI utilities */
+        .modal-overlay {
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
         }
     </style>
 </head>
-<body class="font-nunito antialiased selection:bg-white/30">
+<body class="font-nunito antialiased selection:bg-white/30" id="body-theme">
 
-    <!-- AUDIO PLAYER (Ganti YouTube dengan MP3 Lokal) -->
+    <!-- AUDIO PLAYER -->
     <audio id="bg-music" loop preload="auto">
-        <!-- Letakkan file lagu MP3 Anda di folder asset/audio/ -->
         <source src="asset/audio/song.mp3" type="audio/mpeg">
         <source src="main/asset/audio/song.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Floating Audio Button -->
-    <button id="audio-btn" onclick="toggleAudio()" class="fixed bottom-6 right-6 z-[90] hidden w-12 h-12 rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 border border-white/30 bg-black/20 backdrop-blur-md hover:bg-white/20 hover:scale-110 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-        <i class="ph ph-music-notes text-xl animate-spin-slow" id="audio-icon"></i>
+    <button id="audio-btn" onclick="toggleAudio()" class="fixed bottom-6 right-6 z-[90] hidden w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 border border-white/30 bg-black/20 backdrop-blur-md hover:scale-110 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+        <i class="ph ph-music-notes text-lg md:text-xl animate-spin-slow" id="audio-icon"></i>
     </button>
 
-    <!-- Floating Hamburger Button (Hanya tampil di HP) -->
-    <button id="hamburger-btn" onclick="toggleMenu()" class="fixed top-6 right-6 z-[100] hidden w-12 h-12 rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 border border-white/30 bg-black/20 backdrop-blur-md hover:bg-white/20 hover:scale-110 md:hidden shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-        <i class="ph ph-list text-2xl" id="hamburger-icon"></i>
+    <!-- Floating Hamburger Button -->
+    <button id="hamburger-btn" onclick="toggleMenu()" class="fixed top-6 right-6 z-[100] hidden w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 border border-white/30 bg-black/20 backdrop-blur-md hover:scale-110 md:hidden shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+        <i class="ph ph-list text-xl md:text-2xl" id="hamburger-icon"></i>
     </button>
 
     <!-- Fullscreen Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-[95] bg-black/90 backdrop-blur-lg flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
-        <ul class="text-center space-y-8 font-nanum text-4xl">
-            <li><a href="#home" onclick="toggleMenu()" class="menu-item block">Home</a></li>
-            <li><a href="#couple" onclick="toggleMenu()" class="menu-item block">Mempelai</a></li>
-            <li><a href="#event" onclick="toggleMenu()" class="menu-item block">Informasi Acara</a></li>
-            <li><a href="#gallery" onclick="toggleMenu()" class="menu-item block">Galeri Foto</a></li>
-            <li><a href="#gift" onclick="toggleMenu()" class="menu-item block">Wedding Gift</a></li>
-            <li><a href="#rsvp" onclick="toggleMenu()" class="menu-item block">RSVP</a></li>
+        <ul class="text-center space-y-6 font-nanum text-4xl">
+            <li><a href="#home" onclick="toggleMenu()" class="transition hover:text-white/70 block">Home</a></li>
+            <li><a href="#couple" onclick="toggleMenu()" class="transition hover:text-white/70 block">Mempelai</a></li>
+            <li><a href="#event" onclick="toggleMenu()" class="transition hover:text-white/70 block">Informasi Acara</a></li>
+            <li><a href="#gallery" onclick="toggleMenu()" class="transition hover:text-white/70 block">Galeri Foto</a></li>
+            <li><a href="#gift" onclick="toggleMenu()" class="transition hover:text-white/70 block">Wedding Gift</a></li>
+            <li><a href="#rsvp" onclick="toggleMenu()" class="transition hover:text-white/70 block">RSVP</a></li>
         </ul>
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast">Berhasil disalin!</div>
+    <div id="toast">Notifikasi</div>
+
+    <!-- Modals untuk Config -->
+    <div id="password-modal" class="fixed inset-0 z-[200] hidden modal-overlay flex items-center justify-center px-4">
+        <div class="bg-slate-900 border border-white/20 p-8 rounded-2xl max-w-sm w-full text-center shadow-2xl text-white">
+            <h3 class="text-xl font-bold mb-2">Akses Konfigurasi</h3>
+            <p class="text-xs opacity-70 mb-6">Masukkan password untuk merubah data undangan.</p>
+            <input type="password" id="config-password" class="w-full bg-black/50 border border-white/30 px-4 py-2 rounded-lg text-white focus:outline-none focus:border-white mb-4 text-center" placeholder="Password">
+            <div class="flex gap-3">
+                <button onclick="closeModals()" class="w-1/2 py-2 rounded-lg border border-white/30 hover:bg-white/10 text-sm">Batal</button>
+                <button onclick="verifyPassword()" class="w-1/2 py-2 rounded-lg bg-white text-black font-bold hover:bg-gray-200 text-sm">Masuk</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="config-modal" class="fixed inset-0 z-[200] hidden modal-overlay flex items-center justify-center px-4 py-10">
+        <div class="bg-slate-900 border border-white/20 p-6 md:p-8 rounded-2xl max-w-2xl w-full max-h-full overflow-y-auto shadow-2xl text-white custom-scroll">
+            <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                <h3 class="text-xl font-bold font-nunito">Pengaturan Undangan</h3>
+                <button onclick="closeModals()" class="text-white/50 hover:text-white"><i class="ph ph-x text-2xl"></i></button>
+            </div>
+            
+            <form id="config-form" class="space-y-6 text-sm text-left">
+                <!-- Theme -->
+                <div>
+                    <label class="block mb-1 opacity-70">Tema Tampilan</label>
+                    <select id="cfg-theme" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg focus:outline-none focus:border-white">
+                        <option value="dark">Gelap (Glassmorphism Dark)</option>
+                        <option value="light">Terang (Glassmorphism Light)</option>
+                    </select>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Mempelai Pria -->
+                    <div class="space-y-3 p-4 border border-white/10 rounded-xl bg-black/20">
+                        <h4 class="font-bold text-white/90">Mempelai Pria</h4>
+                        <div><label class="block text-xs opacity-70">Nama Panggilan</label><input type="text" id="cfg-groom-nick" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs opacity-70">Nama Lengkap</label><input type="text" id="cfg-groom-full" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs opacity-70">Nama Orang Tua</label><input type="text" id="cfg-groom-parents" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                    </div>
+                    <!-- Mempelai Wanita -->
+                    <div class="space-y-3 p-4 border border-white/10 rounded-xl bg-black/20">
+                        <h4 class="font-bold text-white/90">Mempelai Wanita</h4>
+                        <div><label class="block text-xs opacity-70">Nama Panggilan</label><input type="text" id="cfg-bride-nick" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs opacity-70">Nama Lengkap</label><input type="text" id="cfg-bride-full" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs opacity-70">Nama Orang Tua</label><input type="text" id="cfg-bride-parents" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                    </div>
+                </div>
+
+                <!-- Waktu & Tempat -->
+                <div class="space-y-4 p-4 border border-white/10 rounded-xl bg-black/20">
+                    <h4 class="font-bold text-white/90">Waktu & Lokasi Acara</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-xs opacity-70">Teks Tanggal Utama</label><input type="text" id="cfg-date-text" placeholder="12 . 12 . 2026" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs opacity-70">Tanggal Asli (Untuk Countdown)</label><input type="date" id="cfg-date-actual" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg text-white"></div>
+                        <div><label class="block text-xs opacity-70">Teks Tanggal Akad & Resepsi</label><input type="text" id="cfg-date-display" placeholder="Sabtu, 12 Desember 2026" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs opacity-70">Link Google Maps</label><input type="text" id="cfg-maps-link" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <label class="block text-xs opacity-70">Jam Akad</label><input type="text" id="cfg-akad-time" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg mb-2">
+                            <label class="block text-xs opacity-70">Lokasi Akad</label><textarea id="cfg-akad-loc" rows="2" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs opacity-70">Jam Resepsi</label><input type="text" id="cfg-resepsi-time" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg mb-2">
+                            <label class="block text-xs opacity-70">Lokasi Resepsi</label><textarea id="cfg-resepsi-loc" rows="2" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rekening -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3 p-4 border border-white/10 rounded-xl bg-black/20">
+                        <h4 class="font-bold text-white/90">Rekening 1</h4>
+                        <div><label class="block text-xs opacity-70">Nama Bank</label><input type="text" id="cfg-bank1-name" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs opacity-70">Nomor Rekening</label><input type="text" id="cfg-bank1-num" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs opacity-70">Atas Nama</label><input type="text" id="cfg-bank1-holder" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                    </div>
+                    <div class="space-y-3 p-4 border border-white/10 rounded-xl bg-black/20">
+                        <h4 class="font-bold text-white/90">Rekening 2</h4>
+                        <div><label class="block text-xs opacity-70">Nama Bank</label><input type="text" id="cfg-bank2-name" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs opacity-70">Nomor Rekening</label><input type="text" id="cfg-bank2-num" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs opacity-70">Atas Nama</label><input type="text" id="cfg-bank2-holder" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></div>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-white/10 flex gap-4">
+                    <button type="button" id="btn-save-config" class="w-full py-3 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <!-- COVER PAGE -->
     <div id="cover-page" class="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-6 transition-opacity duration-1000">
-        <div class="glass-panel p-10 md:p-14 w-full max-w-md" data-aos="zoom-in" data-aos-duration="1500">
-            <h3 class="text-xs md:text-sm tracking-[0.3em] uppercase mb-5 opacity-80">The Wedding Of</h3>
-            <h1 class="font-nanum text-6xl md:text-7xl mb-8 text-white drop-shadow-md">Romeo Juliet</h1>
-            <p class="mb-6 font-light text-sm">Dear / Kepada Yth.</p>
+        <div class="glass-panel p-8 md:p-12 w-full max-w-md" data-aos="zoom-in" data-aos-duration="1500">
+            <h3 class="text-xs tracking-[0.3em] uppercase mb-4 opacity-80">The Wedding Of</h3>
+            <h1 class="font-nanum text-5xl md:text-6xl mb-6 text-white drop-shadow-md" id="cover-names">Romeo & Juliet</h1>
+            <p class="mb-4 font-light text-xs md:text-sm">Dear / Kepada Yth.</p>
             
-            <!-- Ditambahkan ID 'nama-tamu' pada div ini untuk dimanipulasi dengan JavaScript -->
-            <div id="nama-tamu" class="font-bold text-base mb-6 bg-black/30 py-2 px-6 rounded-lg inline-block border border-white/20">
+            <div id="nama-tamu" class="font-bold text-sm md:text-base mb-5 bg-black/30 py-2 px-6 rounded-lg inline-block border border-white/20">
                 Tamu Undangan
             </div>
             
-            <p class="text-[10px] md:text-xs mb-10 opacity-75 font-light">*Mohon maaf bila ada kesalahan penulisan nama/gelar</p>
+            <p class="text-[10px] mb-8 opacity-75 font-light">*Mohon maaf bila ada kesalahan penulisan nama/gelar</p>
             
-            <button id="btn-buka" onclick="bukaUndangan()" class="glass-button text-white px-8 py-3 rounded-full flex items-center justify-center gap-2 mx-auto w-full group text-sm font-semibold tracking-wide">
+            <button id="btn-buka" onclick="bukaUndangan()" class="glass-button text-white px-6 py-2.5 rounded-full flex items-center justify-center gap-2 mx-auto w-full group text-sm font-semibold tracking-wide">
                 <i class="ph ph-envelope-open text-lg group-hover:scale-110 transition-transform"></i>
                 Buka Undangan
             </button>
         </div>
     </div>
 
-    <!-- BACKGROUND VIDEO (Langsung autoplay & opacity full di background) -->
+    <!-- BACKGROUND VIDEO -->
     <video id="bg-video" autoplay loop muted playsinline preload="auto" class="fixed top-0 left-0 w-screen h-screen object-cover z-[-2] opacity-100 pointer-events-none">
         <source src="asset/video/sample.mp4" type="video/mp4">
         <source src="main/asset/video/sample.mp4" type="video/mp4">
-        Browser Anda tidak mendukung tag video.
     </video>
     
-    <!-- OVERLAY (Dipergelap sedikit agar teks terbaca jelas karena kotak background dihilangkan) -->
+    <!-- OVERLAY -->
     <div class="fixed inset-0 bg-black/60 z-[-1]"></div>
 
     <!-- MAIN CONTENT -->
-    <main id="main-content" class="hidden opacity-0 transition-opacity duration-1000 w-full max-w-4xl mx-auto px-6 pb-24">
+    <main id="main-content" class="hidden opacity-0 transition-opacity duration-1000 w-full max-w-4xl mx-auto px-5 pb-20">
 
         <!-- SECTION: HERO -->
-        <section id="home" class="min-h-screen flex flex-col items-center justify-center text-center pt-24 pb-12">
-            <h3 data-aos="fade-down" class="text-sm tracking-[0.4em] uppercase mb-8 font-light">Our Wedding</h3>
+        <section id="home" class="min-h-screen flex flex-col items-center justify-center text-center pt-20 pb-10 relative">
+            <h3 data-aos="fade-down" class="text-xs tracking-[0.4em] uppercase mb-6 font-light">Our Wedding</h3>
             
-            <h1 data-aos="zoom-in" data-aos-delay="200" class="font-nanum text-[7rem] sm:text-[10rem] md:text-[14rem] lg:text-[18rem] mb-10 drop-shadow-2xl text-white leading-[0.75] flex flex-col">
+            <h1 data-aos="zoom-in" data-aos-delay="200" id="hero-names" class="font-nanum text-[6rem] sm:text-[9rem] md:text-[12rem] lg:text-[14rem] mb-6 drop-shadow-2xl text-white leading-[0.8] flex flex-col">
                 <span>Romeo</span>
                 <span>Juliet</span>
             </h1>
             
-            <p data-aos="fade-up" data-aos-delay="400" class="text-base md:text-lg font-light tracking-[0.2em] mt-4">12 . 12 . 2026</p>
+            <p data-aos="fade-up" data-aos-delay="400" id="hero-date" class="text-sm md:text-base font-light tracking-[0.2em] mt-2">12 . 12 . 2026</p>
             
-            <div data-aos="fade-up" data-aos-delay="600" class="mt-24 animate-bounce">
-                <i class="ph ph-caret-down text-3xl opacity-70"></i>
+            <!-- Countdown Aestetik -->
+            <div data-aos="fade-up" data-aos-delay="500" class="mt-8 flex gap-6 md:gap-10 justify-center">
+                <div class="flex flex-col items-center"><span class="text-4xl font-nanum" id="cd-days">00</span><span class="text-[10px] uppercase tracking-widest opacity-70">Hari</span></div>
+                <div class="flex flex-col items-center"><span class="text-4xl font-nanum" id="cd-hours">00</span><span class="text-[10px] uppercase tracking-widest opacity-70">Jam</span></div>
+                <div class="flex flex-col items-center"><span class="text-4xl font-nanum" id="cd-mins">00</span><span class="text-[10px] uppercase tracking-widest opacity-70">Mnt</span></div>
+                <div class="flex flex-col items-center"><span class="text-4xl font-nanum" id="cd-secs">00</span><span class="text-[10px] uppercase tracking-widest opacity-70">Dtk</span></div>
+            </div>
+
+            <div data-aos="fade-up" data-aos-delay="600" class="mt-16 animate-bounce">
+                <i class="ph ph-caret-down text-2xl opacity-70"></i>
             </div>
         </section>
 
         <!-- SECTION: PEMBUKA & MEMPELAI -->
-        <section id="couple" class="py-20 text-center">
-            <div data-aos="fade-up" class="glass-panel p-8 md:p-12 mb-16 max-w-2xl mx-auto">
-                <i class="ph ph-hands-praying text-4xl mb-6 text-white/80 mx-auto block"></i>
-                <p class="font-bold text-xl md:text-2xl mb-5 font-nanum">Assalamu'alaikum Warahmatullahi Wabarakatuh</p>
-                <p class="text-sm font-light leading-loose opacity-90">
+        <section id="couple" class="py-16 text-center">
+            <div data-aos="fade-up" class="glass-panel p-6 md:p-10 mb-12 max-w-2xl mx-auto">
+                <i class="ph ph-hands-praying text-3xl mb-4 text-white/80 mx-auto block"></i>
+                <p class="font-bold text-lg md:text-xl mb-4 font-nanum">Assalamu'alaikum Warahmatullahi Wabarakatuh</p>
+                <p class="text-xs md:text-sm font-light leading-relaxed opacity-90">
                     Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Tanpa mengurangi rasa hormat, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami.
-                    <br><br>
-                    <span class="italic opacity-80">It is with joyful hearts that we invite you to share in our happiness as we celebrate our wedding:</span>
                 </p>
             </div>
 
-            <div class="flex flex-col md:flex-row justify-center items-center gap-12 md:gap-24 mt-16">
+            <div class="flex flex-col md:flex-row justify-center items-center gap-10 md:gap-20 mt-10">
                 <!-- Mempelai Pria -->
                 <div data-aos="fade-right" class="flex flex-col items-center">
-                    <div class="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden border border-white/50 p-1 mb-6 shadow-2xl">
-                        <img src="asset/image/bride/man.jpg" onerror="this.src='https://placehold.co/400x400/222/fff?text=R'" alt="Romeo" class="w-full h-full object-cover rounded-full">
+                    <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border border-white/50 p-1 mb-4 shadow-2xl">
+                        <img src="asset/image/bride/man.jpg" onerror="this.src='https://placehold.co/400x400/222/fff?text=R'" alt="Groom" class="w-full h-full object-cover rounded-full">
                     </div>
-                    <h2 class="font-nanum text-4xl md:text-5xl mb-3">Romeo Montague</h2>
-                    <p class="text-xs md:text-sm font-light opacity-80 mb-1">Putra pertama dari <span class="italic">/ Eldest son of</span></p>
-                    <p class="text-xs md:text-sm font-semibold">Bapak Montague & Ibu Lady Montague</p>
+                    <h2 id="groom-full-name" class="font-nanum text-3xl md:text-4xl mb-2">Romeo Montague</h2>
+                    <p class="text-[10px] md:text-xs font-light opacity-80 mb-1">Putra dari</p>
+                    <p id="groom-parents" class="text-[10px] md:text-xs font-semibold max-w-[200px]">Bapak Montague & Ibu Lady Montague</p>
                 </div>
 
-                <div data-aos="zoom-in" class="font-nanum text-5xl md:text-6xl text-white/50">&</div>
+                <div data-aos="zoom-in" class="font-nanum text-4xl md:text-5xl text-white/50">&</div>
 
                 <!-- Mempelai Wanita -->
                 <div data-aos="fade-left" class="flex flex-col items-center">
-                    <div class="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden border border-white/50 p-1 mb-6 shadow-2xl">
-                        <img src="asset/image/bride/woman.jpg" onerror="this.src='https://placehold.co/400x400/222/fff?text=J'" alt="Juliet" class="w-full h-full object-cover rounded-full">
+                    <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border border-white/50 p-1 mb-4 shadow-2xl">
+                        <img src="asset/image/bride/woman.jpg" onerror="this.src='https://placehold.co/400x400/222/fff?text=J'" alt="Bride" class="w-full h-full object-cover rounded-full">
                     </div>
-                    <h2 class="font-nanum text-4xl md:text-5xl mb-3">Juliet Capulet</h2>
-                    <p class="text-xs md:text-sm font-light opacity-80 mb-1">Putri kedua dari <span class="italic">/ Second daughter of</span></p>
-                    <p class="text-xs md:text-sm font-semibold">Bapak Capulet & Ibu Lady Capulet</p>
+                    <h2 id="bride-full-name" class="font-nanum text-3xl md:text-4xl mb-2">Juliet Capulet</h2>
+                    <p class="text-[10px] md:text-xs font-light opacity-80 mb-1">Putri dari</p>
+                    <p id="bride-parents" class="text-[10px] md:text-xs font-semibold max-w-[200px]">Bapak Capulet & Ibu Lady Capulet</p>
                 </div>
             </div>
         </section>
 
         <!-- SECTION: INFORMASI ACARA -->
-        <section id="event" class="py-20 text-center">
-            <h2 data-aos="fade-up" class="font-nanum text-4xl md:text-5xl mb-16">Save The Date</h2>
+        <section id="event" class="py-16 text-center">
+            <h2 data-aos="fade-up" class="font-nanum text-4xl md:text-5xl mb-12">Save The Date</h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
                 <!-- Akad -->
-                <div data-aos="fade-up" data-aos-delay="100" class="glass-panel p-8 md:p-10 relative overflow-hidden group">
-                    <h3 class="font-nanum text-3xl mb-6 border-b border-white/30 pb-4 inline-block px-8">Akad Nikah <br><span class="text-sm font-nunito italic font-light opacity-70">Holy Matrimony</span></h3>
-                    <div class="space-y-5 text-sm font-light">
-                        <p class="flex items-center justify-center gap-3"><i class="ph ph-calendar-blank text-lg"></i> Sabtu, 12 Desember 2026</p>
-                        <p class="flex items-center justify-center gap-3"><i class="ph ph-clock text-lg"></i> 08.00 WIB - Selesai</p>
-                        <p class="flex items-start justify-center gap-3 mt-6 text-center leading-relaxed">
-                            <span>Masjid Agung Nusantara<br>Jl. Kenangan Indah No. 1, Jakarta</span>
+                <div data-aos="fade-up" data-aos-delay="100" class="glass-panel p-6 md:p-8 relative overflow-hidden group">
+                    <h3 class="font-nanum text-2xl mb-4 border-b border-white/30 pb-3 inline-block px-6">Akad Nikah</h3>
+                    <div class="space-y-4 text-xs md:text-sm font-light">
+                        <p class="flex items-center justify-center gap-2"><i class="ph ph-calendar-blank text-base"></i> <span id="akad-date" class="display-date">Sabtu, 12 Desember 2026</span></p>
+                        <p class="flex items-center justify-center gap-2"><i class="ph ph-clock text-base"></i> <span id="akad-time">08.00 WIB - Selesai</span></p>
+                        <p class="flex items-start justify-center gap-2 mt-4 text-center leading-relaxed">
+                            <span id="akad-loc" class="whitespace-pre-line">Masjid Agung Nusantara<br>Jl. Kenangan Indah No. 1, Jakarta</span>
                         </p>
                     </div>
                 </div>
 
                 <!-- Resepsi -->
-                <div data-aos="fade-up" data-aos-delay="200" class="glass-panel p-8 md:p-10 relative overflow-hidden group">
-                    <h3 class="font-nanum text-3xl mb-6 border-b border-white/30 pb-4 inline-block px-8">Resepsi <br><span class="text-sm font-nunito italic font-light opacity-70">Wedding Reception</span></h3>
-                    <div class="space-y-5 text-sm font-light">
-                        <p class="flex items-center justify-center gap-3"><i class="ph ph-calendar-blank text-lg"></i> Sabtu, 12 Desember 2026</p>
-                        <p class="flex items-center justify-center gap-3"><i class="ph ph-clock text-lg"></i> 11.00 WIB - 14.00 WIB</p>
-                        <p class="flex items-start justify-center gap-3 mt-6 text-center leading-relaxed">
-                            <span>Grand Ballroom Hotel Bintang<br>Jl. Bahagia Selalu No. 99, Jakarta</span>
+                <div data-aos="fade-up" data-aos-delay="200" class="glass-panel p-6 md:p-8 relative overflow-hidden group">
+                    <h3 class="font-nanum text-2xl mb-4 border-b border-white/30 pb-3 inline-block px-6">Resepsi</h3>
+                    <div class="space-y-4 text-xs md:text-sm font-light">
+                        <p class="flex items-center justify-center gap-2"><i class="ph ph-calendar-blank text-base"></i> <span id="resepsi-date" class="display-date">Sabtu, 12 Desember 2026</span></p>
+                        <p class="flex items-center justify-center gap-2"><i class="ph ph-clock text-base"></i> <span id="resepsi-time">11.00 WIB - 14.00 WIB</span></p>
+                        <p class="flex items-start justify-center gap-2 mt-4 text-center leading-relaxed">
+                            <span id="resepsi-loc" class="whitespace-pre-line">Grand Ballroom Hotel Bintang<br>Jl. Bahagia Selalu No. 99, Jakarta</span>
                         </p>
                     </div>
                 </div>
             </div>
 
             <!-- Peta -->
-            <div data-aos="zoom-in" data-aos-delay="300" class="mt-20">
-                <a href="https://maps.google.com" target="_blank" class="glass-button inline-flex items-center gap-3 px-10 py-4 rounded-full text-xs font-semibold uppercase tracking-widest">
-                    <i class="ph ph-map-trifold text-xl transition-colors"></i> Open in Google Maps
+            <div data-aos="zoom-in" data-aos-delay="300" class="mt-12">
+                <a id="gmaps-btn" href="https://maps.google.com" target="_blank" class="glass-button inline-flex items-center gap-2 px-8 py-3 rounded-full text-xs font-semibold uppercase tracking-widest">
+                    <i class="ph ph-map-trifold text-lg transition-colors"></i> Buka Google Maps
                 </a>
             </div>
         </section>
 
-        <!-- SECTION: GALERI (Kolase scroll otomatis) -->
+        <!-- SECTION: GALERI -->
         <section id="gallery" class="py-16 text-center overflow-hidden">
-            <h2 data-aos="fade-up" class="font-nanum text-5xl md:text-6xl mb-10">Our Moments</h2>
-            
+            <h2 data-aos="fade-up" class="font-nanum text-4xl md:text-5xl mb-8">Our Moments</h2>
             <div data-aos="fade-up" class="gallery-container">
                 <div class="gallery-track" id="auto-gallery-track">
-                    <!-- Foto akan dimuat secara otomatis oleh JavaScript dari folder asset/image/galery/ -->
+                    <!-- Foto dimuat otomatis -->
                 </div>
             </div>
-            <p class="text-xs opacity-60 mt-4 font-light italic">*Geser atau biarkan berjalan otomatis / Swipe or let it auto-scroll</p>
+            <p class="text-[10px] opacity-60 mt-3 font-light italic">*Geser atau biarkan berjalan otomatis</p>
         </section>
 
-        <!-- SECTION: ANGPAO / AMPLOP DIGITAL -->
-        <section id="gift" class="py-20 text-center">
-            <div data-aos="fade-up" class="glass-panel p-10 md:p-14 max-w-3xl mx-auto">
-                <i class="ph ph-gift text-4xl mb-6 mx-auto block text-white/90"></i>
-                <h2 class="font-nanum text-4xl md:text-5xl mb-8">Wedding Gift</h2>
-                <p class="text-sm font-light mb-12 opacity-90 leading-loose max-w-lg mx-auto">
-                    Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun, jika Anda bermaksud memberikan tanda kasih, dapat melalui fitur di bawah ini:<br>
-                    <span class="italic opacity-80 mt-2 block">Your presence and prayers are the greatest gift. However, if you wish to give a blessing, you may use the feature below:</span>
+        <!-- SECTION: ANGPAO -->
+        <section id="gift" class="py-16 text-center">
+            <div data-aos="fade-up" class="glass-panel p-8 md:p-10 max-w-3xl mx-auto">
+                <i class="ph ph-gift text-3xl mb-4 mx-auto block text-white/90"></i>
+                <h2 class="font-nanum text-3xl md:text-4xl mb-6">Wedding Gift</h2>
+                <p class="text-xs md:text-sm font-light mb-10 opacity-90 leading-relaxed max-w-lg mx-auto">
+                    Doa restu Anda merupakan karunia yang sangat berarti. Jika Anda bermaksud memberikan tanda kasih, dapat melalui fitur di bawah ini:
                 </p>
-                <div class="flex flex-col md:flex-row justify-center gap-12">
+                <div class="flex flex-col md:flex-row justify-center gap-8">
                     <!-- Rekening 1 -->
-                    <div class="p-6 w-full md:w-1/2">
-                        <i class="ph ph-bank text-3xl mb-3 opacity-80"></i>
-                        <p class="font-semibold text-sm tracking-widest opacity-80">BCA</p>
-                        <p class="text-3xl font-nanum tracking-[0.15em] my-3" id="rek-bca">1234 5678 90</p>
-                        <p class="text-xs mb-8 opacity-70">a.n Romeo Montague</p>
-                        <button onclick="copyText('rek-bca')" class="glass-button mx-auto text-xs px-8 py-2.5 rounded-full flex items-center justify-center gap-2">
-                            <i class="ph ph-copy transition-colors"></i> Salin Rekening
+                    <div class="p-4 w-full md:w-1/2 border border-white/10 rounded-xl bg-black/20">
+                        <i class="ph ph-bank text-2xl mb-2 opacity-80"></i>
+                        <p id="bank1-name" class="font-semibold text-xs tracking-widest opacity-80 uppercase">BCA</p>
+                        <p class="text-2xl font-nanum tracking-widest my-2" id="rek1-num">1234 5678 90</p>
+                        <p id="rek1-holder" class="text-[10px] mb-4 opacity-70 uppercase">a.n Romeo Montague</p>
+                        <button onclick="copyText('rek1-num')" class="glass-button mx-auto text-[10px] px-6 py-2 rounded-full flex items-center justify-center gap-2">
+                            <i class="ph ph-copy"></i> Salin Rekening
                         </button>
                     </div>
 
                     <!-- Rekening 2 -->
-                    <div class="p-6 w-full md:w-1/2">
-                        <i class="ph ph-wallet text-3xl mb-3 opacity-80"></i>
-                        <p class="font-semibold text-sm tracking-widest opacity-80">MANDIRI</p>
-                        <p class="text-3xl font-nanum tracking-[0.15em] my-3" id="rek-mandiri">0987 6543 21</p>
-                        <p class="text-xs mb-8 opacity-70">a.n Juliet Capulet</p>
-                        <button onclick="copyText('rek-mandiri')" class="glass-button mx-auto text-xs px-8 py-2.5 rounded-full flex items-center justify-center gap-2">
-                            <i class="ph ph-copy transition-colors"></i> Salin Rekening
+                    <div class="p-4 w-full md:w-1/2 border border-white/10 rounded-xl bg-black/20">
+                        <i class="ph ph-wallet text-2xl mb-2 opacity-80"></i>
+                        <p id="bank2-name" class="font-semibold text-xs tracking-widest opacity-80 uppercase">MANDIRI</p>
+                        <p class="text-2xl font-nanum tracking-widest my-2" id="rek2-num">0987 6543 21</p>
+                        <p id="rek2-holder" class="text-[10px] mb-4 opacity-70 uppercase">a.n Juliet Capulet</p>
+                        <button onclick="copyText('rek2-num')" class="glass-button mx-auto text-[10px] px-6 py-2 rounded-full flex items-center justify-center gap-2">
+                            <i class="ph ph-copy"></i> Salin Rekening
                         </button>
                     </div>
                 </div>
@@ -369,358 +462,579 @@
         </section>
 
         <!-- SECTION: RSVP & REVIEW -->
-        <section id="rsvp" class="py-20 text-center">
-            <h2 data-aos="fade-up" class="font-nanum text-4xl md:text-5xl mb-12">RSVP & Wishes</h2>
+        <section id="rsvp" class="py-16 text-center">
+            <h2 data-aos="fade-up" class="font-nanum text-4xl md:text-5xl mb-10">RSVP & Wishes</h2>
             
-            <div data-aos="fade-up" class="glass-panel p-8 md:p-10 mb-16 text-left max-w-xl mx-auto">
-                <form id="rsvp-form" class="space-y-8">
+            <div data-aos="fade-up" class="glass-panel p-6 md:p-8 mb-12 text-left max-w-xl mx-auto">
+                <form id="rsvp-form" class="space-y-6">
                     <div>
-                        <input type="text" id="rsvp-name" required class="w-full bg-transparent border-0 border-b border-white/50 px-2 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white transition-colors text-center text-sm" placeholder="Nama Lengkap / Full Name">
+                        <input type="text" id="rsvp-name" required class="w-full bg-transparent border-0 border-b border-white/50 px-2 py-2 text-white placeholder-white/50 focus:outline-none focus:border-white transition-colors text-center text-sm" placeholder="Nama Lengkap">
                     </div>
                     <div>
-                        <select id="rsvp-status" class="w-full bg-transparent border-0 border-b border-white/50 px-2 py-3 text-white focus:outline-none focus:border-white transition-colors appearance-none text-center text-sm opacity-80">
-                            <option value="Hadir" class="text-black">Pasti Hadir / Will Attend</option>
-                            <option value="Tidak Hadir" class="text-black">Maaf, Tidak Bisa / Cannot Attend</option>
-                            <option value="Masih Ragu" class="text-black">Masih Ragu / Tentative</option>
+                        <select id="rsvp-status" class="w-full bg-transparent border-0 border-b border-white/50 px-2 py-2 text-white focus:outline-none focus:border-white transition-colors appearance-none text-center text-sm opacity-80">
+                            <option value="Hadir" class="text-black">Pasti Hadir</option>
+                            <option value="Tidak Hadir" class="text-black">Maaf, Tidak Bisa</option>
+                            <option value="Masih Ragu" class="text-black">Masih Ragu</option>
                         </select>
                     </div>
                     <div>
-                        <textarea id="rsvp-message" rows="2" required class="w-full bg-transparent border-0 border-b border-white/50 px-2 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white transition-colors text-center text-sm resize-none" placeholder="Tuliskan ucapan & doa restu... / Write your wishes..."></textarea>
+                        <textarea id="rsvp-message" rows="2" required class="w-full bg-transparent border-0 border-b border-white/50 px-2 py-2 text-white placeholder-white/50 focus:outline-none focus:border-white transition-colors text-center text-sm resize-none" placeholder="Tuliskan ucapan & doa restu..."></textarea>
                     </div>
-                    <div class="pt-4">
-                        <button type="submit" class="glass-button w-full py-3 rounded-full text-sm tracking-widest uppercase flex justify-center items-center gap-2">
-                            <i class="ph ph-paper-plane-right transition-colors"></i> Kirim / Submit
+                    <div class="pt-2">
+                        <button type="submit" id="btn-submit-rsvp" class="glass-button w-full py-2.5 rounded-full text-xs tracking-widest uppercase flex justify-center items-center gap-2">
+                            <i class="ph ph-paper-plane-right"></i> Kirim Ucapan
                         </button>
                     </div>
                 </form>
             </div>
 
             <!-- Review RSVP List -->
-            <div data-aos="fade-up" class="text-left mt-12 max-w-2xl mx-auto">
-                <h3 class="font-nanum text-3xl mb-8 text-center border-b border-white/20 pb-4 inline-block mx-auto flex items-center justify-center gap-3">
-                    <i class="ph ph-chat-teardrop-text align-middle"></i>Daftar Ucapan
+            <div data-aos="fade-up" class="text-left mt-8 max-w-2xl mx-auto">
+                <h3 class="font-nanum text-2xl mb-6 text-center border-b border-white/20 pb-3 inline-block mx-auto flex items-center justify-center gap-2">
+                    <i class="ph ph-chat-teardrop-text text-xl"></i>Daftar Ucapan
                 </h3>
                 
-                <div id="rsvp-reviews" class="space-y-6 max-h-[400px] overflow-y-auto pr-3 mt-8" style="scrollbar-width: thin;">
-                    <!-- Data Dummy Awal -->
-                    <div class="border-b border-white/10 pb-5">
-                        <div class="flex items-center gap-4 mb-3">
-                            <div class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center font-nanum text-xl">B</div>
-                            <div>
-                                <h4 class="font-bold text-sm tracking-wide">Budi Santoso <span class="bg-white text-black text-[10px] px-2 py-0.5 rounded-full ml-2 font-bold uppercase">Hadir</span></h4>
-                                <p class="text-xs opacity-50 mt-0.5">Baru saja</p>
-                            </div>
-                        </div>
-                        <p class="text-sm font-light pl-14 opacity-90">Selamat menempuh hidup baru! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.</p>
-                    </div>
-                    
-                    <div class="border-b border-white/10 pb-5">
-                        <div class="flex items-center gap-4 mb-3">
-                            <div class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center font-nanum text-xl">S</div>
-                            <div>
-                                <h4 class="font-bold text-sm tracking-wide">Siti Aminah <span class="bg-white text-black text-[10px] px-2 py-0.5 rounded-full ml-2 font-bold uppercase">Hadir</span></h4>
-                                <p class="text-xs opacity-50 mt-0.5">2 jam yang lalu</p>
-                            </div>
-                        </div>
-                        <p class="text-sm font-light pl-14 opacity-90">Lancar-lancar sampai hari H ya Romeo & Juliet. Can't wait to see you on your big day!</p>
-                    </div>
+                <div id="rsvp-reviews" class="space-y-4 max-h-[350px] overflow-y-auto pr-2 mt-4 custom-scroll">
+                    <div class="text-center text-xs opacity-50 py-10" id="rsvp-empty">Loading ucapan...</div>
                 </div>
             </div>
         </section>
 
         <!-- SECTION: PENUTUP -->
-        <section id="closing" class="min-h-screen flex flex-col items-center justify-center text-center">
-            <h2 data-aos="zoom-in" class="font-nanum text-5xl md:text-6xl mb-8">Thank You</h2>
-            <p data-aos="fade-up" class="text-sm font-light mb-10 max-w-lg mx-auto opacity-90 leading-loose">
+        <section id="closing" class="min-h-[80vh] flex flex-col items-center justify-center text-center">
+            <h2 data-aos="zoom-in" class="font-nanum text-4xl md:text-5xl mb-6">Thank You</h2>
+            <p data-aos="fade-up" class="text-xs md:text-sm font-light mb-8 max-w-lg mx-auto opacity-90 leading-relaxed">
                 Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.
-                <br>
-                <span class="italic opacity-80">Your presence will make our day complete and fill our hearts with joy.</span>
             </p>
-            <p data-aos="fade-up" data-aos-delay="200" class="font-bold text-xl md:text-2xl mb-16 font-nanum">Wassalamu'alaikum Warahmatullahi Wabarakatuh</p>
+            <p data-aos="fade-up" data-aos-delay="200" class="font-bold text-lg md:text-xl mb-12 font-nanum">Wassalamu'alaikum Warahmatullahi Wabarakatuh</p>
             
-            <div data-aos="fade-up" data-aos-delay="300" class="mt-8">
-                <p class="text-xs tracking-widest font-light opacity-80 mb-4 uppercase">Kami yang berbahagia</p>
-                <h3 class="font-nanum text-7xl md:text-8xl">Romeo Juliet</h3>
+            <div data-aos="fade-up" data-aos-delay="300" class="mt-4">
+                <p class="text-[10px] tracking-widest font-light opacity-80 mb-2 uppercase">Kami yang berbahagia</p>
+                <h3 id="footer-names" class="font-nanum text-5xl md:text-6xl">Romeo & Juliet</h3>
             </div>
         </section>
 
-        <!-- WATERMARK / FOOTER -->
-        <footer class="text-center pb-8">
-            <p class="text-[10px] md:text-xs font-light tracking-[0.2em] opacity-50 uppercase">
-                Project by <span class="font-bold opacity-100">Draftgraphy</span>
+        <!-- WATERMARK / FOOTER (Klik Draftgraphy untuk Config) -->
+        <footer class="text-center pb-6">
+            <p class="text-[9px] md:text-[10px] font-light tracking-[0.2em] opacity-50 uppercase">
+                Project by <span onclick="promptPassword()" class="font-bold opacity-100 cursor-pointer">Draftgraphy</span>
             </p>
         </footer>
 
     </main>
 
-    <!-- Script Utama -->
+    <!-- GOOGLE APPS SCRIPT & CORE LOGIC -->
+    <!-- 
+    ========================================================================================
+    PETUNJUK PENGGUNAAN GOOGLE APPS SCRIPT (GAS) & GOOGLE DRIVE:
+    
+    1. Buka https://script.google.com/ dan buat Project Baru (Atau edit project Anda yang sudah ada).
+    2. Hapus semua kode yang ada di editor, lalu PASTE kode backend di bawah ini:
+    
+function getFileId() {
+  // ID Folder Google Drive Spesifik Anda
+  var folderId = '1nXlilSdpYapf1DYZIUhPcIdBsz3t6LZS';
+  var fileName = 'undangansetting.json';
+  
+  var folder = DriveApp.getFolderById(folderId);
+  var files = folder.getFilesByName(fileName);
+  
+  if (files.hasNext()) {
+    return files.next().getId();
+  } else {
+    var defaultData = { config: {}, rsvp: [] };
+    var file = folder.createFile(fileName, JSON.stringify(defaultData), MimeType.PLAIN_TEXT);
+    return file.getId();
+  }
+}
+
+function doGet(e) {
+  var id = getFileId();
+  var content = DriveApp.getFileById(id).getBlob().getDataAsString();
+  return ContentService.createTextOutput(content).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var id = getFileId();
+  var file = DriveApp.getFileById(id);
+  var content = file.getBlob().getDataAsString();
+  var data = content ? JSON.parse(content) : { config: {}, rsvp: [] };
+  
+  var payload = JSON.parse(e.postData.contents);
+  if (payload.action === 'saveConfig') {
+    data.config = payload.config;
+  } else if (payload.action === 'addRsvp') {
+    if(!data.rsvp) data.rsvp = [];
+    data.rsvp.push(payload.rsvpData);
+  }
+  
+  file.setContent(JSON.stringify(data));
+  return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
+}
+    
+    3. WAJIB UPDATE DEPLOYMENT: 
+       Klik tombol "Deploy" (Terapkan) -> "Manage deployments" (Kelola deployment).
+       Klik icon pensil (Edit), pastikan versi adalah "New version".
+       Klik Deploy.
+    ========================================================================================
+    -->
     <script>
-        // Inisialisasi AOS (Animate On Scroll)
-        AOS.init({
-            once: false,
-            offset: 50,
-            duration: 800,
-            easing: 'ease-out-cubic',
-        });
+        // [!] URL WEB APP GOOGLE APPS SCRIPT ANDA
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwuqpOsP7bIne_zWRdJaVjiu4zCgXn1-zhsH_7fvA5tiHj-5gzCTmqTx1w067sHNvljUQ/exec";
 
-        // -----------------------------------------------------
-        // Audio Player (Menggunakan HTML5 Audio - MP3)
-        // -----------------------------------------------------
-        const bgMusic = document.getElementById('bg-music');
+        // Konfigurasi Default Internal
+        let configData = {
+            theme: "dark",
+            groomNick: "Romeo", groomFull: "Romeo Montague", groomParents: "Bapak Montague & Ibu Lady Montague",
+            brideNick: "Juliet", brideFull: "Juliet Capulet", brideParents: "Bapak Capulet & Ibu Lady Capulet",
+            dateText: "12 . 12 . 2026", dateActual: "2026-12-12", dateDisplay: "Sabtu, 12 Desember 2026",
+            akadTime: "08.00 WIB - Selesai", akadLoc: "Masjid Agung Nusantara\nJl. Kenangan Indah No. 1, Jakarta",
+            resepsiTime: "11.00 WIB - 14.00 WIB", resepsiLoc: "Grand Ballroom Hotel Bintang\nJl. Bahagia Selalu No. 99, Jakarta",
+            mapsLink: "https://maps.google.com",
+            bank1Name: "BCA", bank1Num: "1234 5678 90", bank1Holder: "Romeo Montague",
+            bank2Name: "MANDIRI", bank2Num: "0987 6543 21", bank2Holder: "Juliet Capulet"
+        };
+
+        let rsvpDataList = [];
+        let countdownInterval = null;
+
+        // Inisialisasi Aplikasi
+        async function initApp() {
+            AOS.init({ once: false, offset: 50, duration: 800, easing: 'ease-out-cubic' });
+            handleUrlParams();
+            
+            // Render default/fallback
+            applyConfigToUI();
+            startCountdown();
+            document.getElementById('rsvp-empty').innerText = "Memuat data...";
+
+            if (APP_SCRIPT_URL !== "URL_GOOGLE_APPS_SCRIPT_ANDA_DISINI") {
+                await loadDataFromGAS();
+            } else {
+                document.getElementById('rsvp-empty').innerText = "Belum terhubung ke Database Google Script.";
+            }
+        }
+
+        function handleUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const namaTamu = urlParams.get('to') || urlParams.get('nama');
+            if (namaTamu) {
+                const elementNamaTamu = document.getElementById('nama-tamu');
+                if (elementNamaTamu) elementNamaTamu.textContent = namaTamu;
+            }
+        }
+
+        // --- MANAJEMEN DATA (GOOGLE APPS SCRIPT) ---
+        async function loadDataFromGAS() {
+            try {
+                const res = await fetch(APP_SCRIPT_URL);
+                const data = await res.json();
+                
+                // Update Config
+                if (data.config && Object.keys(data.config).length > 0) {
+                    configData = { ...configData, ...data.config };
+                }
+                
+                // Update RSVP
+                if (data.rsvp && Array.isArray(data.rsvp)) {
+                    rsvpDataList = data.rsvp;
+                }
+
+                applyConfigToUI();
+                populateConfigForm();
+                startCountdown();
+                
+                // Urutkan RSVP dari yang terbaru
+                rsvpDataList.sort((a, b) => b.timestamp - a.timestamp);
+                renderRsvps(rsvpDataList);
+
+            } catch (e) {
+                console.error("Error load data dari GAS:", e);
+                document.getElementById('rsvp-empty').innerText = "Gagal memuat data. Periksa koneksi internet/link script.";
+            }
+        }
+
+        async function saveConfig(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btn-save-config');
+            btn.innerText = "Menyimpan...";
+
+            const newConfig = {
+                theme: document.getElementById('cfg-theme').value,
+                groomNick: document.getElementById('cfg-groom-nick').value,
+                groomFull: document.getElementById('cfg-groom-full').value,
+                groomParents: document.getElementById('cfg-groom-parents').value,
+                brideNick: document.getElementById('cfg-bride-nick').value,
+                brideFull: document.getElementById('cfg-bride-full').value,
+                brideParents: document.getElementById('cfg-bride-parents').value,
+                dateText: document.getElementById('cfg-date-text').value,
+                dateActual: document.getElementById('cfg-date-actual').value,
+                dateDisplay: document.getElementById('cfg-date-display').value,
+                akadTime: document.getElementById('cfg-akad-time').value,
+                akadLoc: document.getElementById('cfg-akad-loc').value,
+                resepsiTime: document.getElementById('cfg-resepsi-time').value,
+                resepsiLoc: document.getElementById('cfg-resepsi-loc').value,
+                mapsLink: document.getElementById('cfg-maps-link').value,
+                bank1Name: document.getElementById('cfg-bank1-name').value,
+                bank1Num: document.getElementById('cfg-bank1-num').value,
+                bank1Holder: document.getElementById('cfg-bank1-holder').value,
+                bank2Name: document.getElementById('cfg-bank2-name').value,
+                bank2Num: document.getElementById('cfg-bank2-num').value,
+                bank2Holder: document.getElementById('cfg-bank2-holder').value,
+            };
+
+            // Update UI Lokal Segera (Optimistic)
+            configData = newConfig;
+            applyConfigToUI();
+            startCountdown();
+            window.closeModals();
+            window.showToast("Menyimpan ke Cloud...");
+
+            try {
+                // Kirim ke GAS
+                await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'saveConfig', config: newConfig })
+                });
+                window.showToast("Pengaturan berhasil disimpan!");
+            } catch (err) {
+                console.error(err);
+                window.showToast("Gagal menyimpan ke cloud!");
+            } finally {
+                btn.innerText = "Simpan Perubahan";
+            }
+        }
+
+        async function submitRsvp(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('btn-submit-rsvp');
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin"></i> Mengirim...`;
+            
+            const name = document.getElementById('rsvp-name').value;
+            const status = document.getElementById('rsvp-status').value;
+            const message = document.getElementById('rsvp-message').value;
+
+            const newRsvp = {
+                name, status, message,
+                timestamp: Date.now()
+            };
+
+            // Update UI Lokal Segera
+            rsvpDataList.unshift(newRsvp);
+            renderRsvps(rsvpDataList);
+            document.getElementById('rsvp-form').reset();
+            window.showToast("Menyimpan ucapan...");
+
+            try {
+                // Kirim ke GAS
+                await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'addRsvp', rsvpData: newRsvp })
+                });
+                window.showToast("Ucapan berhasil dikirim!");
+            } catch (err) {
+                console.error(err);
+                window.showToast("Terjadi kesalahan jaringan.");
+            } finally {
+                btn.innerHTML = `<i class="ph ph-paper-plane-right"></i> Kirim Ucapan`;
+            }
+        }
+
+        // --- UPDATE UI LOGIC ---
+        function applyConfigToUI() {
+            // Theme
+            const body = document.getElementById('body-theme');
+            if(configData.theme === 'light') {
+                body.classList.add('theme-light');
+            } else {
+                body.classList.remove('theme-light');
+            }
+
+            // Texts
+            safeHtml('cover-names', `${configData.groomNick} & ${configData.brideNick}`);
+            safeHtml('hero-names', `<span>${configData.groomNick}</span><span>${configData.brideNick}</span>`);
+            safeHtml('hero-date', configData.dateText);
+            safeHtml('groom-full-name', configData.groomFull);
+            safeHtml('groom-parents', configData.groomParents);
+            safeHtml('bride-full-name', configData.brideFull);
+            safeHtml('bride-parents', configData.brideParents);
+            
+            document.querySelectorAll('.display-date').forEach(el => el.textContent = configData.dateDisplay);
+            safeHtml('akad-time', configData.akadTime);
+            safeHtml('akad-loc', configData.akadLoc);
+            safeHtml('resepsi-time', configData.resepsiTime);
+            safeHtml('resepsi-loc', configData.resepsiLoc);
+            
+            const gmaps = document.getElementById('gmaps-btn');
+            if (gmaps) gmaps.href = configData.mapsLink;
+
+            safeHtml('bank1-name', configData.bank1Name);
+            safeHtml('rek1-num', configData.bank1Num);
+            safeHtml('rek1-holder', `a.n ${configData.bank1Holder}`);
+            safeHtml('bank2-name', configData.bank2Name);
+            safeHtml('rek2-num', configData.bank2Num);
+            safeHtml('rek2-holder', `a.n ${configData.bank2Holder}`);
+
+            safeHtml('footer-names', `${configData.groomNick} & ${configData.brideNick}`);
+        }
+
+        function populateConfigForm() {
+            document.getElementById('cfg-theme').value = configData.theme;
+            document.getElementById('cfg-groom-nick').value = configData.groomNick;
+            document.getElementById('cfg-groom-full').value = configData.groomFull;
+            document.getElementById('cfg-groom-parents').value = configData.groomParents;
+            document.getElementById('cfg-bride-nick').value = configData.brideNick;
+            document.getElementById('cfg-bride-full').value = configData.brideFull;
+            document.getElementById('cfg-bride-parents').value = configData.brideParents;
+            document.getElementById('cfg-date-text').value = configData.dateText;
+            document.getElementById('cfg-date-actual').value = configData.dateActual;
+            document.getElementById('cfg-date-display').value = configData.dateDisplay;
+            document.getElementById('cfg-akad-time').value = configData.akadTime;
+            document.getElementById('cfg-akad-loc').value = configData.akadLoc;
+            document.getElementById('cfg-resepsi-time').value = configData.resepsiTime;
+            document.getElementById('cfg-resepsi-loc').value = configData.resepsiLoc;
+            document.getElementById('cfg-maps-link').value = configData.mapsLink;
+            document.getElementById('cfg-bank1-name').value = configData.bank1Name;
+            document.getElementById('cfg-bank1-num').value = configData.bank1Num;
+            document.getElementById('cfg-bank1-holder').value = configData.bank1Holder;
+            document.getElementById('cfg-bank2-name').value = configData.bank2Name;
+            document.getElementById('cfg-bank2-num').value = configData.bank2Num;
+            document.getElementById('cfg-bank2-holder').value = configData.bank2Holder;
+        }
+
+        function renderRsvps(list) {
+            const container = document.getElementById('rsvp-reviews');
+            container.innerHTML = '';
+            
+            if (!list || list.length === 0) {
+                container.innerHTML = `<div class="text-center text-xs opacity-50 py-10" id="rsvp-empty">Belum ada ucapan. Jadilah yang pertama!</div>`;
+                return;
+            }
+
+            list.forEach(item => {
+                const initial = item.name ? item.name.charAt(0).toUpperCase() : '?';
+                
+                // Format relative time
+                const diff = Date.now() - item.timestamp;
+                let timeStr = "Baru saja";
+                if (diff > 86400000) timeStr = Math.floor(diff/86400000) + " hari lalu";
+                else if (diff > 3600000) timeStr = Math.floor(diff/3600000) + " jam lalu";
+                else if (diff > 60000) timeStr = Math.floor(diff/60000) + " menit lalu";
+
+                const div = document.createElement('div');
+                div.className = 'border-b border-white/10 pb-4';
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center font-nanum text-lg bg-black/20">${initial}</div>
+                        <div>
+                            <h4 class="font-bold text-xs tracking-wide">${escapeHTML(item.name)} <span class="bg-white text-black text-[9px] px-2 py-0.5 rounded-full ml-1 font-bold uppercase">${escapeHTML(item.status)}</span></h4>
+                            <p class="text-[10px] opacity-50 mt-0.5">${timeStr}</p>
+                        </div>
+                    </div>
+                    <p class="text-xs font-light pl-11 opacity-90 leading-relaxed">${escapeHTML(item.message)}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function startCountdown() {
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            const targetDate = new Date(configData.dateActual).getTime();
+            if (isNaN(targetDate)) return;
+
+            countdownInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    updateCountdown(0,0,0,0);
+                    return;
+                }
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                updateCountdown(days, hours, minutes, seconds);
+            }, 1000);
+        }
+
+        function updateCountdown(d, h, m, s) {
+            safeHtml('cd-days', String(d).padStart(2, '0'));
+            safeHtml('cd-hours', String(h).padStart(2, '0'));
+            safeHtml('cd-mins', String(m).padStart(2, '0'));
+            safeHtml('cd-secs', String(s).padStart(2, '0'));
+        }
+
+        // Utils
+        function safeHtml(id, html) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = html;
+        }
+        function escapeHTML(str) {
+            const p = document.createElement("p");
+            p.appendChild(document.createTextNode(str));
+            return p.innerHTML;
+        }
+
+        // Event Listeners Registration
+        document.getElementById('config-form').addEventListener('submit', saveConfig);
+        document.getElementById('rsvp-form').addEventListener('submit', submitRsvp);
+
+        // --- EXPORT TO WINDOW FOR HTML INLINE HANDLERS ---
+        window.promptPassword = function() {
+            document.getElementById('password-modal').classList.remove('hidden');
+            document.getElementById('config-password').value = '';
+            document.getElementById('config-password').focus();
+        };
+
+        window.verifyPassword = function() {
+            const pwd = document.getElementById('config-password').value;
+            if (pwd === "21R$yd09") {
+                document.getElementById('password-modal').classList.add('hidden');
+                document.getElementById('config-modal').classList.remove('hidden');
+                populateConfigForm();
+            } else {
+                window.showToast("Password Salah!");
+            }
+        };
+
+        window.closeModals = function() {
+            document.getElementById('password-modal').classList.add('hidden');
+            document.getElementById('config-modal').classList.add('hidden');
+        };
+
+        window.showToast = function(msg) {
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000);
+        };
+
+        window.copyText = function(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy).then(() => window.showToast('Berhasil disalin!'));
+            } else {
+                let textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    window.showToast('Berhasil disalin!');
+                } catch (err) {}
+                textArea.remove();
+            }
+        };
+
         let isAudioPlaying = false;
-
-        // Toggle (Play/Pause) Audio Musik
-        function toggleAudio() {
+        window.toggleAudio = function() {
+            const bgMusic = document.getElementById('bg-music');
             const icon = document.getElementById('audio-icon');
             if (isAudioPlaying) {
                 bgMusic.pause();
-                icon.classList.remove('animate-spin-slow');
-                icon.classList.remove('ph-music-notes');
+                icon.classList.remove('animate-spin-slow', 'ph-music-notes');
                 icon.classList.add('ph-speaker-slash');
                 isAudioPlaying = false;
             } else {
                 bgMusic.play();
-                icon.classList.add('animate-spin-slow');
+                icon.classList.add('animate-spin-slow', 'ph-music-notes');
                 icon.classList.remove('ph-speaker-slash');
-                icon.classList.add('ph-music-notes');
                 isAudioPlaying = true;
             }
-        }
+        };
 
-        // -----------------------------------------------------
-        // Mobile Menu Toggle
-        // -----------------------------------------------------
-        function toggleMenu() {
+        window.toggleMenu = function() {
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('hamburger-icon');
-            
             if (menu.classList.contains('opacity-0')) {
-                // Buka menu
                 menu.classList.remove('opacity-0', 'pointer-events-none');
-                icon.classList.remove('ph-list');
-                icon.classList.add('ph-x');
+                icon.classList.replace('ph-list', 'ph-x');
             } else {
-                // Tutup menu
                 menu.classList.add('opacity-0', 'pointer-events-none');
-                icon.classList.remove('ph-x');
-                icon.classList.add('ph-list');
+                icon.classList.replace('ph-x', 'ph-list');
             }
-        }
+        };
 
-        const video = document.getElementById('bg-video');
-
-        // Memastikan DOM siap, mengecek Parameter URL untuk nama tamu, dan video
-        window.addEventListener('DOMContentLoaded', () => {
-            // FITUR CUSTOM NAMA TAMU BERDASARKAN URL PARAMETER
-            const urlParams = new URLSearchParams(window.location.search);
-            const namaTamu = urlParams.get('to') || urlParams.get('nama'); // Mendukung ?to= atau ?nama=
-            
-            if (namaTamu) {
-                const elementNamaTamu = document.getElementById('nama-tamu');
-                if (elementNamaTamu) {
-                    // Mengubah textContent agar XSS safe (menghindari injeksi script jahat)
-                    elementNamaTamu.textContent = namaTamu;
-                }
-            }
-
-            // AUTO-PLAY BACKGROUND VIDEO
-            if (video) {
-                video.muted = true;
-                video.playsInline = true;
-                video.play().catch(err => {
-                    console.log("Autoplay awal dicegah browser, akan diputar saat tombol diklik:", err);
-                });
-            }
-        });
-
-        function bukaUndangan() {
+        window.bukaUndangan = function() {
             const cover = document.getElementById('cover-page');
             const mainContent = document.getElementById('main-content');
-            const audioBtn = document.getElementById('audio-btn');
-            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const video = document.getElementById('bg-video');
+            const bgMusic = document.getElementById('bg-music');
 
-            // Paksa pemutaran ulang jika sebelumnya sempat terhenti oleh browser
-            if (video && video.paused) {
-                video.muted = true;
-                video.play();
-            }
-
-            // Putar Audio MP3
+            if (video && video.paused) { video.muted = true; video.play(); }
             if (bgMusic) {
                 bgMusic.play().then(() => {
                     isAudioPlaying = true;
                     document.getElementById('audio-icon').classList.add('animate-spin-slow');
-                }).catch(err => {
-                    console.log("Audio autoplay diblokir:", err);
-                });
+                }).catch(e => console.log(e));
             }
 
-            // Tampilkan tombol interaktif
-            audioBtn.classList.remove('hidden');
-            hamburgerBtn.classList.remove('hidden');
-
-            // Tampilkan Main Content & hilangkan Cover secara transparan (fade out)
+            document.getElementById('audio-btn').classList.remove('hidden');
+            document.getElementById('hamburger-btn').classList.remove('hidden');
             mainContent.classList.remove('hidden');
-
             cover.style.opacity = '0';
             
             setTimeout(() => {
                 cover.style.display = 'none';
                 mainContent.style.opacity = '1';
-                
-                // Refresh animasi AOS saat halaman dibuka
                 AOS.refresh();
-                
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }, 800);
-        }
+        };
 
-        // Fitur Copy Rekening (Tanpa alert)
-        function copyText(elementId) {
-            const textToCopy = document.getElementById(elementId).innerText;
-            
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(textToCopy).then(showToast);
-            } else {
-                let textArea = document.createElement("textarea");
-                textArea.value = textToCopy;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-999999px";
-                textArea.style.top = "-999999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    showToast();
-                } catch (err) {
-                    console.error('Fallback: Gagal menyalin', err);
-                }
-                textArea.remove();
-            }
-        }
-
-        // Tampilkan Custom Toast
-        function showToast() {
-            const toast = document.getElementById("toast");
-            toast.classList.add("show");
-            setTimeout(function(){ 
-                toast.classList.remove("show"); 
-            }, 3000);
-        }
-
-        // Logika Submit RSVP
-        const rsvpForm = document.getElementById('rsvp-form');
-        const rsvpReviews = document.getElementById('rsvp-reviews');
-
-        rsvpForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const name = document.getElementById('rsvp-name').value;
-            const status = document.getElementById('rsvp-status').value;
-            const message = document.getElementById('rsvp-message').value;
-
-            const initial = name.charAt(0).toUpperCase();
-            const time = "Baru saja";
-
-            const newReview = document.createElement('div');
-            newReview.className = 'border-b border-white/10 pb-5 animate-pulse';
-            newReview.innerHTML = `
-                <div class="flex items-center gap-4 mb-3">
-                    <div class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center font-nanum text-xl">${initial}</div>
-                    <div>
-                        <h4 class="font-bold text-sm tracking-wide">${name} <span class="bg-white text-black text-[10px] px-2 py-0.5 rounded-full ml-2 font-bold uppercase">${status}</span></h4>
-                        <p class="text-xs opacity-50 mt-0.5">${time}</p>
-                    </div>
-                </div>
-                <p class="text-sm font-light pl-14 opacity-90">${message}</p>
-            `;
-
-            rsvpReviews.prepend(newReview);
-
-            setTimeout(() => {
-                newReview.classList.remove('animate-pulse');
-            }, 1000);
-
-            document.getElementById('toast').innerText = "Ucapan berhasil dikirim!";
-            showToast();
-            
-            setTimeout(() => {
-                document.getElementById('toast').innerText = "Berhasil disalin!";
-            }, 3500);
-
-            rsvpForm.reset();
-        });
-
-        // -----------------------------------------------------
-        // Auto-Loader Galeri Foto
-        // -----------------------------------------------------
-        window.addEventListener('DOMContentLoaded', () => {
+        // --- GALERI AUTO-LOADER ---
+        function initGallery() {
             const galleryTrack = document.getElementById('auto-gallery-track');
             const folderPath = 'asset/image/galery/';
-            const extension = '.jpg'; // Pastikan foto Anda berformat .jpg
-            
+            const extension = '.jpg';
             let imageIndex = 1;
             let loadedImages = [];
-            const maxImagesLimit = 50; // Batas maksimal foto untuk mencegah infinite loop
+            const maxImages = 20;
 
-            function loadNextImage() {
-                if (imageIndex > maxImagesLimit) {
-                    finalizeGallery();
-                    return;
-                }
-
+            function loadNext() {
+                if (imageIndex > maxImages) { finalize(); return; }
                 let img = new Image();
                 img.src = `${folderPath}${imageIndex}${extension}`;
                 img.className = "gallery-item";
-                img.alt = `Galeri ${imageIndex}`;
-                
-                // Memberikan variasi lebar agar terlihat estetik dan dinamis
-                const widths = [250, 350, 300, 320]; 
-                img.style.width = widths[(imageIndex - 1) % 4] + "px";
-
-                img.onload = function() {
-                    // Jika berhasil dimuat, simpan ke array dan lanjut cari gambar berikutnya
+                img.onload = () => {
                     loadedImages.push(img.cloneNode());
                     imageIndex++;
-                    loadNextImage(); 
+                    loadNext();
                 };
-
-                img.onerror = function() {
-                    // Jika gagal (file tidak ada), hentikan pencarian dan render galeri
-                    finalizeGallery();
-                };
+                img.onerror = () => finalize();
             }
 
-            function finalizeGallery() {
-                if(loadedImages.length === 0) {
-                    // Fallback jika tidak ada foto sama sekali di folder
-                    galleryTrack.innerHTML = '<p class="text-sm opacity-50 w-full text-center tracking-widest">Belum ada foto di folder galeri.</p>';
+            function finalize() {
+                if (loadedImages.length === 0) {
+                    galleryTrack.innerHTML = '<p class="text-[10px] opacity-50 w-full text-center">Belum ada foto.</p>';
                     return;
                 }
-                
-                // 1. Masukkan set foto asli
                 loadedImages.forEach(img => galleryTrack.appendChild(img));
-                
-                // 2. Masukkan set foto duplikat untuk efek endless looping scroll
-                loadedImages.forEach(img => {
-                    let clone = img.cloneNode();
-                    galleryTrack.appendChild(clone);
-                });
-
-                // Sesuaikan kecepatan animasi berdasarkan jumlah foto (5 detik per foto)
-                const animDuration = loadedImages.length * 5; 
-                galleryTrack.style.animationDuration = `${animDuration}s`;
+                loadedImages.forEach(img => galleryTrack.appendChild(img.cloneNode()));
+                galleryTrack.style.animationDuration = `${loadedImages.length * 5}s`;
             }
+            if (galleryTrack) loadNext();
+        }
 
-            // Mulai proses auto-load
-            if(galleryTrack) {
-                loadNextImage();
+        // Init everything
+        document.addEventListener("DOMContentLoaded", () => {
+            const video = document.getElementById('bg-video');
+            if (video) {
+                video.muted = true;
+                video.playsInline = true;
+                video.play().catch(e => {});
             }
+            initGallery();
+            initApp();
         });
+
     </script>
 </body>
 </html>
