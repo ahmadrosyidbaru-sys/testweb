@@ -164,6 +164,12 @@
 </head>
 <body class="font-nunito antialiased selection:bg-white/30" id="body-theme">
 
+    <!-- LOADING SCREEN (Mencegah tampilan template bawaan sebelum data dimuat) -->
+    <div id="initial-loader" class="fixed inset-0 z-[300] bg-black flex flex-col items-center justify-center transition-opacity duration-700">
+        <i class="ph ph-spinner animate-spin text-5xl text-white mb-4"></i>
+        <p class="text-xs text-white/70 tracking-[0.2em] uppercase font-light">Memuat Undangan...</p>
+    </div>
+
     <!-- AUDIO PLAYER -->
     <audio id="bg-music" loop preload="auto">
         <source src="asset/audio/song.mp3" type="audio/mpeg">
@@ -641,19 +647,29 @@ function doPost(e) {
 
         // Inisialisasi Aplikasi
         async function initApp() {
-            AOS.init({ once: false, offset: 50, duration: 800, easing: 'ease-out-cubic' });
             handleUrlParams();
             
-            // Render default/fallback
-            applyConfigToUI();
-            startCountdown();
             document.getElementById('rsvp-empty').innerText = "Memuat data...";
 
+            // Tunggu data di-load dari Google Script terlebih dahulu
             if (APP_SCRIPT_URL !== "URL_GOOGLE_APPS_SCRIPT_ANDA_DISINI") {
                 await loadDataFromGAS();
             } else {
                 document.getElementById('rsvp-empty').innerText = "Belum terhubung ke Database Google Script.";
+                applyConfigToUI();
+                populateConfigForm();
+                startCountdown();
             }
+
+            // Sembunyikan loading screen setelah semua data dan tampilan siap
+            const loader = document.getElementById('initial-loader');
+            if (loader) {
+                loader.classList.add('opacity-0');
+                setTimeout(() => loader.style.display = 'none', 700);
+            }
+
+            // Inisialisasi animasi AOS agar berjalan sesuai layout yang sudah difetch
+            AOS.init({ once: false, offset: 50, duration: 800, easing: 'ease-out-cubic' });
         }
 
         function handleUrlParams() {
@@ -686,7 +702,11 @@ function doPost(e) {
                 if (data.rsvp && Array.isArray(data.rsvp)) {
                     rsvpDataList = data.rsvp;
                 }
-
+            } catch (e) {
+                console.error("Error load data dari GAS:", e);
+                document.getElementById('rsvp-empty').innerText = "Gagal memuat data. Periksa koneksi internet/link script.";
+            } finally {
+                // Terapkan ke UI (baik sukses maupun gagal akan dirender)
                 applyConfigToUI();
                 populateConfigForm();
                 startCountdown();
@@ -694,10 +714,6 @@ function doPost(e) {
                 // Urutkan RSVP dari yang terbaru
                 rsvpDataList.sort((a, b) => b.timestamp - a.timestamp);
                 renderRsvps(rsvpDataList);
-
-            } catch (e) {
-                console.error("Error load data dari GAS:", e);
-                document.getElementById('rsvp-empty').innerText = "Gagal memuat data. Periksa koneksi internet/link script.";
             }
         }
 
