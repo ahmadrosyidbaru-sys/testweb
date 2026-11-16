@@ -216,13 +216,22 @@
             </div>
             
             <form id="config-form" class="space-y-6 text-sm text-left">
-                <!-- Theme -->
-                <div>
-                    <label class="block mb-1 opacity-70">Tema Tampilan</label>
-                    <select id="cfg-theme" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg focus:outline-none focus:border-white">
-                        <option value="dark">Gelap (Glassmorphism Dark)</option>
-                        <option value="light">Terang (Glassmorphism Light)</option>
-                    </select>
+                <!-- Theme & Overlay -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border border-white/10 rounded-xl bg-black/20 p-4">
+                    <div>
+                        <label class="block mb-1 opacity-70 font-bold text-white/90">Tema Tampilan</label>
+                        <select id="cfg-theme" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg focus:outline-none focus:border-white">
+                            <option value="dark">Gelap (Glassmorphism Dark)</option>
+                            <option value="light">Terang (Glassmorphism Light)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-1 opacity-70 font-bold text-white/90">Transparansi Background</label>
+                        <div class="flex items-center gap-3 mt-2">
+                            <input type="range" id="cfg-overlay-opacity" min="0" max="1" step="0.05" class="w-full cursor-pointer accent-white">
+                            <span id="cfg-overlay-val" class="w-12 text-right opacity-80 text-xs font-bold font-nunito">60%</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -318,7 +327,7 @@
     </video>
     
     <!-- OVERLAY -->
-    <div class="fixed inset-0 bg-black/60 z-[-1]"></div>
+    <div id="bg-overlay" class="fixed inset-0 z-[-1] transition-colors duration-700"></div>
 
     <!-- MAIN CONTENT -->
     <main id="main-content" class="hidden opacity-0 transition-opacity duration-1000 w-full max-w-4xl mx-auto px-5 pb-20">
@@ -611,11 +620,12 @@ function doPost(e) {
     -->
         <script>
         // [!] URL WEB APP GOOGLE APPS SCRIPT ANDA
-        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUqCniprR4YMZvN-1nBKhN0csSfHwV2ORpeW0qdD5Qrx-Z-G2Aq8rsmkPl-k-D8M1oag/exec";
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHzD1vyH_mp0_z3En1HY2eRJcXq4xmKpflH7-meqjOywNdnycolfx3x_EIQv5Fruf0VQ/exec";
 
         // Konfigurasi Default Internal
         let configData = {
             theme: "dark",
+            overlayOpacity: 0.6,
             groomNick: "Romeo", groomFull: "Romeo Montague", groomParents: "Bapak Montague & Ibu Lady Montague",
             brideNick: "Juliet", brideFull: "Juliet Capulet", brideParents: "Bapak Capulet & Ibu Lady Capulet",
             dateText: "12 . 12 . 2026", dateActual: "2026-12-12", dateDisplay: "Sabtu, 12 Desember 2026",
@@ -639,7 +649,7 @@ function doPost(e) {
             startCountdown();
             document.getElementById('rsvp-empty').innerText = "Memuat data...";
 
-            if (APP_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbxUqCniprR4YMZvN-1nBKhN0csSfHwV2ORpeW0qdD5Qrx-Z-G2Aq8rsmkPl-k-D8M1oag/exec") {
+            if (APP_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbzHzD1vyH_mp0_z3En1HY2eRJcXq4xmKpflH7-meqjOywNdnycolfx3x_EIQv5Fruf0VQ/exec") {
                 await loadDataFromGAS();
             } else {
                 document.getElementById('rsvp-empty').innerText = "Belum terhubung ke Database Google Script.";
@@ -658,7 +668,13 @@ function doPost(e) {
         // --- MANAJEMEN DATA (GOOGLE APPS SCRIPT) ---
         async function loadDataFromGAS() {
             try {
-                const res = await fetch(APP_SCRIPT_URL);
+                // Menambahkan parameter timestamp & no-store agar browser TIDAK nge-cache data lama
+                const urlWithCacheBuster = APP_SCRIPT_URL + "?t=" + new Date().getTime();
+                const res = await fetch(urlWithCacheBuster, {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+                
                 const data = await res.json();
                 
                 // Update Config
@@ -693,6 +709,7 @@ function doPost(e) {
 
             const newConfig = {
                 theme: document.getElementById('cfg-theme').value,
+                overlayOpacity: parseFloat(document.getElementById('cfg-overlay-opacity').value),
                 groomNick: document.getElementById('cfg-groom-nick').value,
                 groomFull: document.getElementById('cfg-groom-full').value,
                 groomParents: document.getElementById('cfg-groom-parents').value,
@@ -792,12 +809,20 @@ function doPost(e) {
 
         // --- UPDATE UI LOGIC ---
         function applyConfigToUI() {
-            // Theme
+            // Theme & Overlay
             const body = document.getElementById('body-theme');
+            const mainOverlay = document.getElementById('bg-overlay');
+            const coverPage = document.getElementById('cover-page');
+            const opacity = configData.overlayOpacity !== undefined ? parseFloat(configData.overlayOpacity) : 0.6;
+            
             if(configData.theme === 'light') {
                 body.classList.add('theme-light');
+                if (mainOverlay) mainOverlay.style.backgroundColor = `rgba(255, 255, 255, ${opacity})`;
+                if (coverPage) coverPage.style.background = `linear-gradient(rgba(255,255,255,${Math.max(0, opacity - 0.2)}), rgba(255,255,255,${Math.min(1, opacity + 0.2)}))`;
             } else {
                 body.classList.remove('theme-light');
+                if (mainOverlay) mainOverlay.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
+                if (coverPage) coverPage.style.background = `linear-gradient(rgba(0,0,0,${Math.max(0, opacity - 0.3)}), rgba(0,0,0,${Math.min(1, opacity + 0.1)}))`;
             }
 
             // Texts
@@ -831,6 +856,15 @@ function doPost(e) {
 
         function populateConfigForm() {
             document.getElementById('cfg-theme').value = configData.theme;
+            
+            const opacitySlider = document.getElementById('cfg-overlay-opacity');
+            const opacityVal = document.getElementById('cfg-overlay-val');
+            if (opacitySlider) {
+                const op = configData.overlayOpacity !== undefined ? configData.overlayOpacity : 0.6;
+                opacitySlider.value = op;
+                if (opacityVal) opacityVal.innerText = Math.round(op * 100) + "%";
+            }
+
             document.getElementById('cfg-groom-nick').value = configData.groomNick;
             document.getElementById('cfg-groom-full').value = configData.groomFull;
             document.getElementById('cfg-groom-parents').value = configData.groomParents;
@@ -933,6 +967,13 @@ function doPost(e) {
         // Event Listeners Registration
         document.getElementById('config-form').addEventListener('submit', saveConfig);
         document.getElementById('rsvp-form').addEventListener('submit', submitRsvp);
+        
+        const overlaySlider = document.getElementById('cfg-overlay-opacity');
+        if (overlaySlider) {
+            overlaySlider.addEventListener('input', function(e) {
+                document.getElementById('cfg-overlay-val').innerText = Math.round(e.target.value * 100) + "%";
+            });
+        }
 
         // --- EXPORT TO WINDOW FOR HTML INLINE HANDLERS ---
         window.promptPassword = function() {
