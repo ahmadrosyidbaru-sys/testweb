@@ -138,6 +138,18 @@
             display: none; /* Chrome/Safari */
         }
         .gallery-track { display: flex; gap: 1rem; width: max-content; }
+        
+        .gallery-item {
+            height: 350px;
+            object-fit: cover;
+            border-radius: 1rem;
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            /* Efek gradasi pudar di bawah foto */
+            -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+        }
 
         #toast {
             position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
@@ -1099,26 +1111,45 @@ function doPost(e) {
             const extension = '.jpg';
             let imageIndex = 1;
             let loadedImages = [];
-            const maxImages = 20;
+            const maxImagesLimit = 150; // Cari hingga 150 foto berturut-turut
 
             function loadNext() {
-                if (imageIndex > maxImages) { finalize(); return; }
+                if (imageIndex > maxImagesLimit) { finalize(); return; }
                 let img = new Image();
                 img.src = `${folderPath}${imageIndex}${extension}`;
                 img.className = "gallery-item";
+                
+                // Beri variasi ukuran lebar agar galeri terlihat dinamis
+                const widths = [250, 300, 280, 320];
+                img.style.width = widths[(imageIndex - 1) % 4] + "px";
+
                 img.onload = () => {
+                    // Masukkan ke array jika berhasil dimuat
                     loadedImages.push(img.cloneNode());
                     imageIndex++;
-                    loadNext();
+                    loadNext(); // Panggil foto berikutnya
                 };
-                img.onerror = () => finalize();
+                
+                img.onerror = () => finalize(); // Hentikan pencarian jika file tidak ditemukan
+            }
+
+            // Fungsi acak (shuffle array)
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
             }
 
             function finalize() {
                 if (loadedImages.length === 0) {
-                    galleryTrack.innerHTML = '<p class="text-[10px] opacity-50 w-full text-center">Belum ada foto.</p>';
+                    galleryTrack.innerHTML = '<p class="text-[10px] opacity-50 w-full text-center">Belum ada foto di folder galeri.</p>';
                     return;
                 }
+                
+                // Acak urutan foto yang berhasil dimuat
+                loadedImages = shuffleArray(loadedImages);
                 
                 // Bungkus gambar dalam grup untuk mempermudah perhitungan loop scroll
                 const group1 = document.createElement('div');
@@ -1129,7 +1160,7 @@ function doPost(e) {
                 
                 galleryTrack.innerHTML = '';
                 galleryTrack.appendChild(group1);
-                galleryTrack.appendChild(group2);
+                galleryTrack.appendChild(group2); // Duplikat untuk efek infinite scroll
                 
                 // Logika Auto Scroll & Swipe Native
                 let autoScrollInterval;
@@ -1142,7 +1173,7 @@ function doPost(e) {
                                 galleryContainer.scrollLeft = 0;
                             }
                         }
-                    }, 20); 
+                    }, 25); 
                 }
                 
                 function stopScroll() { clearInterval(autoScrollInterval); }
