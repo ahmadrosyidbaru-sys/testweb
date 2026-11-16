@@ -202,9 +202,12 @@
             <h3 class="text-xs md:text-sm tracking-[0.3em] uppercase mb-5 opacity-80">The Wedding Of</h3>
             <h1 class="font-nanum text-6xl md:text-7xl mb-8 text-white drop-shadow-md">Romeo Juliet</h1>
             <p class="mb-6 font-light text-sm">Dear / Kepada Yth.</p>
-            <div class="font-bold text-base mb-6 bg-black/30 py-2 px-6 rounded-lg inline-block border border-white/20">
+            
+            <!-- Ditambahkan ID 'nama-tamu' pada div ini untuk dimanipulasi dengan JavaScript -->
+            <div id="nama-tamu" class="font-bold text-base mb-6 bg-black/30 py-2 px-6 rounded-lg inline-block border border-white/20">
                 Tamu Undangan
             </div>
+            
             <p class="text-[10px] md:text-xs mb-10 opacity-75 font-light">*Mohon maaf bila ada kesalahan penulisan nama/gelar</p>
             
             <button id="btn-buka" onclick="bukaUndangan()" class="glass-button text-white px-8 py-3 rounded-full flex items-center justify-center gap-2 mx-auto w-full group text-sm font-semibold tracking-wide">
@@ -506,8 +509,21 @@
 
         const video = document.getElementById('bg-video');
 
-        // Memastikan video langsung diputar sejak awal dimuat
+        // Memastikan DOM siap, mengecek Parameter URL untuk nama tamu, dan video
         window.addEventListener('DOMContentLoaded', () => {
+            // FITUR CUSTOM NAMA TAMU BERDASARKAN URL PARAMETER
+            const urlParams = new URLSearchParams(window.location.search);
+            const namaTamu = urlParams.get('to') || urlParams.get('nama'); // Mendukung ?to= atau ?nama=
+            
+            if (namaTamu) {
+                const elementNamaTamu = document.getElementById('nama-tamu');
+                if (elementNamaTamu) {
+                    // Mengubah textContent agar XSS safe (menghindari injeksi script jahat)
+                    elementNamaTamu.textContent = namaTamu;
+                }
+            }
+
+            // AUTO-PLAY BACKGROUND VIDEO
             if (video) {
                 video.muted = true;
                 video.playsInline = true;
