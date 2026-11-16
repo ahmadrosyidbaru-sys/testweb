@@ -260,6 +260,10 @@
                             <label class="block text-xs opacity-70">Jam Resepsi</label><input type="text" id="cfg-resepsi-time" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg mb-2">
                             <label class="block text-xs opacity-70">Lokasi Resepsi</label><textarea id="cfg-resepsi-loc" rows="2" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg"></textarea>
                         </div>
+                        <div class="md:col-span-2 mt-2 pt-2 border-t border-white/10">
+                            <label class="block text-xs opacity-70">Dresscode Tamu</label>
+                            <input type="text" id="cfg-dresscode" placeholder="Misal: Putih / Bebas Rapi" class="w-full bg-black/50 border border-white/30 px-3 py-2 rounded-lg">
+                        </div>
                     </div>
                 </div>
 
@@ -280,7 +284,7 @@
                 </div>
 
                 <div class="pt-4 border-t border-white/10 flex gap-4">
-                    <button type="button" id="btn-save-config" class="w-full py-3 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition">Simpan Perubahan</button>
+                    <button type="submit" id="btn-save-config" class="w-full py-3 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
@@ -331,11 +335,31 @@
             <p data-aos="fade-up" data-aos-delay="400" id="hero-date" class="text-sm md:text-base font-light tracking-[0.2em] mt-2">12 . 12 . 2026</p>
             
             <!-- Countdown Aestetik -->
-            <div data-aos="fade-up" data-aos-delay="500" class="mt-8 flex gap-6 md:gap-10 justify-center">
-                <div class="flex flex-col items-center"><span class="text-4xl font-nanum" id="cd-days">00</span><span class="text-[10px] uppercase tracking-widest opacity-70">Hari</span></div>
-                <div class="flex flex-col items-center"><span class="text-4xl font-nanum" id="cd-hours">00</span><span class="text-[10px] uppercase tracking-widest opacity-70">Jam</span></div>
-                <div class="flex flex-col items-center"><span class="text-4xl font-nanum" id="cd-mins">00</span><span class="text-[10px] uppercase tracking-widest opacity-70">Mnt</span></div>
-                <div class="flex flex-col items-center"><span class="text-4xl font-nanum" id="cd-secs">00</span><span class="text-[10px] uppercase tracking-widest opacity-70">Dtk</span></div>
+            <div data-aos="fade-up" data-aos-delay="500" class="mt-8 flex gap-4 md:gap-8 justify-center">
+                <div class="flex flex-col items-center">
+                    <div class="bg-white text-black w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-2 shadow-lg">
+                        <span class="text-3xl md:text-4xl font-nanum font-bold" id="cd-days">00</span>
+                    </div>
+                    <span class="text-[10px] uppercase tracking-widest opacity-70 text-white">Hari</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-white text-black w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-2 shadow-lg">
+                        <span class="text-3xl md:text-4xl font-nanum font-bold" id="cd-hours">00</span>
+                    </div>
+                    <span class="text-[10px] uppercase tracking-widest opacity-70 text-white">Jam</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-white text-black w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-2 shadow-lg">
+                        <span class="text-3xl md:text-4xl font-nanum font-bold" id="cd-mins">00</span>
+                    </div>
+                    <span class="text-[10px] uppercase tracking-widest opacity-70 text-white">Mnt</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-white text-black w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-2 shadow-lg">
+                        <span class="text-3xl md:text-4xl font-nanum font-bold" id="cd-secs">00</span>
+                    </div>
+                    <span class="text-[10px] uppercase tracking-widest opacity-70 text-white">Dtk</span>
+                </div>
             </div>
 
             <div data-aos="fade-up" data-aos-delay="600" class="mt-16 animate-bounce">
@@ -408,8 +432,12 @@
                 </div>
             </div>
 
-            <!-- Peta -->
-            <div data-aos="zoom-in" data-aos-delay="300" class="mt-12">
+            <!-- Dresscode & Peta -->
+            <div data-aos="fade-up" data-aos-delay="250" class="mt-8 glass-panel p-4 inline-block px-8 mx-auto rounded-full bg-black/20">
+                <p class="text-xs md:text-sm font-light flex items-center justify-center gap-2"><i class="ph ph-t-shirt text-lg"></i> Dresscode: <span id="display-dresscode" class="font-bold">Bebas Rapi</span></p>
+            </div>
+
+            <div data-aos="zoom-in" data-aos-delay="300" class="mt-8">
                 <a id="gmaps-btn" href="https://maps.google.com" target="_blank" class="glass-button inline-flex items-center gap-2 px-8 py-3 rounded-full text-xs font-semibold uppercase tracking-widest">
                     <i class="ph ph-map-trifold text-lg transition-colors"></i> Buka Google Maps
                 </a>
@@ -502,7 +530,7 @@
 
         <!-- SECTION: PENUTUP -->
         <section id="closing" class="min-h-[80vh] flex flex-col items-center justify-center text-center">
-            <h2 data-aos="zoom-in" class="font-nanum text-4xl md:text-5xl mb-6">Thank You</h2>
+            <h2 data-aos="zoom-in" class="font-nanum text-4xl md:text-5xl mb-6 leading-tight max-w-2xl mx-auto">Makasih yaa, <br>Doain kami Langgeng!</h2>
             <p data-aos="fade-up" class="text-xs md:text-sm font-light mb-8 max-w-lg mx-auto opacity-90 leading-relaxed">
                 Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.
             </p>
@@ -528,23 +556,19 @@
     ========================================================================================
     PETUNJUK PENGGUNAAN GOOGLE APPS SCRIPT (GAS) & GOOGLE DRIVE:
     
-    1. Buka https://script.google.com/ dan buat Project Baru (Atau edit project Anda yang sudah ada).
-    2. Hapus semua kode yang ada di editor, lalu PASTE kode backend di bawah ini:
+    1. Buka https://script.google.com/ dan edit project Anda.
+    2. Hapus semua kode yang lama, lalu PASTE kode backend yang disempurnakan ini:
     
 function getFileId() {
-  // ID Folder Google Drive Spesifik Anda
   var folderId = '1nXlilSdpYapf1DYZIUhPcIdBsz3t6LZS';
   var fileName = 'undangansetting.json';
-  
   var folder = DriveApp.getFolderById(folderId);
   var files = folder.getFilesByName(fileName);
-  
   if (files.hasNext()) {
     return files.next().getId();
   } else {
     var defaultData = { config: {}, rsvp: [] };
-    var file = folder.createFile(fileName, JSON.stringify(defaultData), MimeType.PLAIN_TEXT);
-    return file.getId();
+    return folder.createFile(fileName, JSON.stringify(defaultData), MimeType.PLAIN_TEXT).getId();
   }
 }
 
@@ -555,32 +579,39 @@ function doGet(e) {
 }
 
 function doPost(e) {
-  var id = getFileId();
-  var file = DriveApp.getFileById(id);
-  var content = file.getBlob().getDataAsString();
-  var data = content ? JSON.parse(content) : { config: {}, rsvp: [] };
-  
-  var payload = JSON.parse(e.postData.contents);
-  if (payload.action === 'saveConfig') {
-    data.config = payload.config;
-  } else if (payload.action === 'addRsvp') {
-    if(!data.rsvp) data.rsvp = [];
-    data.rsvp.push(payload.rsvpData);
+  try {
+    var id = getFileId();
+    var file = DriveApp.getFileById(id);
+    var content = file.getBlob().getDataAsString();
+    var data = content ? JSON.parse(content) : { config: {}, rsvp: [] };
+    
+    var payload = JSON.parse(e.postData.contents);
+    if (payload.action === 'saveConfig') {
+      data.config = payload.config;
+    } else if (payload.action === 'addRsvp') {
+      if(!data.rsvp) data.rsvp = [];
+      data.rsvp.push(payload.rsvpData);
+    }
+    
+    file.setContent(JSON.stringify(data));
+    return ContentService.createTextOutput(JSON.stringify({success: true, message: "Data tersimpan"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({success: false, error: err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
   }
-  
-  file.setContent(JSON.stringify(data));
-  return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
 }
     
-    3. WAJIB UPDATE DEPLOYMENT: 
-       Klik tombol "Deploy" (Terapkan) -> "Manage deployments" (Kelola deployment).
-       Klik icon pensil (Edit), pastikan versi adalah "New version".
-       Klik Deploy.
+    3. PENTING: SAAT DEPLOYMENT (Terapkan) -> Manage deployments.
+       - Pilih "New Version" (Versi Baru).
+       - Pastikan "Execute as" (Jalankan sebagai) = "Me" (Email Anda).
+       - Pastikan "Who has access" (Siapa yang memiliki akses) = "Anyone" (Siapa saja).
+       Klik Deploy!
     ========================================================================================
     -->
-    <script>
+        <script>
         // [!] URL WEB APP GOOGLE APPS SCRIPT ANDA
-        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOMuwkpLwkkoUg03K_A3ZmThxwjjwdUQ46bJpfw6cC3Q_9LF5eZ3G8vB4yLrZ0y-nrqg/exec";
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUqCniprR4YMZvN-1nBKhN0csSfHwV2ORpeW0qdD5Qrx-Z-G2Aq8rsmkPl-k-D8M1oag/exec";
 
         // Konfigurasi Default Internal
         let configData = {
@@ -590,7 +621,7 @@ function doPost(e) {
             dateText: "12 . 12 . 2026", dateActual: "2026-12-12", dateDisplay: "Sabtu, 12 Desember 2026",
             akadTime: "08.00 WIB - Selesai", akadLoc: "Masjid Agung Nusantara\nJl. Kenangan Indah No. 1, Jakarta",
             resepsiTime: "11.00 WIB - 14.00 WIB", resepsiLoc: "Grand Ballroom Hotel Bintang\nJl. Bahagia Selalu No. 99, Jakarta",
-            mapsLink: "https://maps.google.com",
+            mapsLink: "https://maps.google.com", dresscode: "Bebas Rapi & Sopan",
             bank1Name: "BCA", bank1Num: "1234 5678 90", bank1Holder: "Romeo Montague",
             bank2Name: "MANDIRI", bank2Num: "0987 6543 21", bank2Holder: "Juliet Capulet"
         };
@@ -608,7 +639,7 @@ function doPost(e) {
             startCountdown();
             document.getElementById('rsvp-empty').innerText = "Memuat data...";
 
-            if (APP_SCRIPT_URL !== "URL_GOOGLE_APPS_SCRIPT_ANDA_DISINI") {
+            if (APP_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbxUqCniprR4YMZvN-1nBKhN0csSfHwV2ORpeW0qdD5Qrx-Z-G2Aq8rsmkPl-k-D8M1oag/exec") {
                 await loadDataFromGAS();
             } else {
                 document.getElementById('rsvp-empty').innerText = "Belum terhubung ke Database Google Script.";
@@ -676,6 +707,7 @@ function doPost(e) {
                 resepsiTime: document.getElementById('cfg-resepsi-time').value,
                 resepsiLoc: document.getElementById('cfg-resepsi-loc').value,
                 mapsLink: document.getElementById('cfg-maps-link').value,
+                dresscode: document.getElementById('cfg-dresscode').value,
                 bank1Name: document.getElementById('cfg-bank1-name').value,
                 bank1Num: document.getElementById('cfg-bank1-num').value,
                 bank1Holder: document.getElementById('cfg-bank1-holder').value,
@@ -692,16 +724,23 @@ function doPost(e) {
             window.showToast("Menyimpan ke Cloud...");
 
             try {
-                // Kirim ke GAS
-                await fetch(APP_SCRIPT_URL, {
+                // Kirim ke GAS dengan tambahan parameter redirect: 'follow'
+                const res = await fetch(APP_SCRIPT_URL, {
                     method: 'POST',
+                    redirect: 'follow',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action: 'saveConfig', config: newConfig })
                 });
-                window.showToast("Pengaturan berhasil disimpan!");
+                
+                const result = await res.json();
+                if(result.success) {
+                    window.showToast("Pengaturan berhasil disimpan!");
+                } else {
+                    throw new Error(result.error);
+                }
             } catch (err) {
-                console.error(err);
-                window.showToast("Gagal menyimpan ke cloud!");
+                console.error("Gagal menyimpan config:", err);
+                window.showToast("Gagal menyimpan. Pastikan akses Google Script diset ke 'Anyone'.");
             } finally {
                 btn.innerText = "Simpan Perubahan";
             }
@@ -729,16 +768,23 @@ function doPost(e) {
             window.showToast("Menyimpan ucapan...");
 
             try {
-                // Kirim ke GAS
-                await fetch(APP_SCRIPT_URL, {
+                // Kirim ke GAS dengan parameter redirect: 'follow'
+                const res = await fetch(APP_SCRIPT_URL, {
                     method: 'POST',
+                    redirect: 'follow',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action: 'addRsvp', rsvpData: newRsvp })
                 });
-                window.showToast("Ucapan berhasil dikirim!");
+                
+                const result = await res.json();
+                if(result.success) {
+                    window.showToast("Ucapan berhasil dikirim!");
+                } else {
+                    throw new Error(result.error);
+                }
             } catch (err) {
-                console.error(err);
-                window.showToast("Terjadi kesalahan jaringan.");
+                console.error("Gagal submit rsvp:", err);
+                window.showToast("Gagal mengirim. Pastikan akses Google Script diset ke 'Anyone'.");
             } finally {
                 btn.innerHTML = `<i class="ph ph-paper-plane-right"></i> Kirim Ucapan`;
             }
@@ -768,6 +814,7 @@ function doPost(e) {
             safeHtml('akad-loc', configData.akadLoc);
             safeHtml('resepsi-time', configData.resepsiTime);
             safeHtml('resepsi-loc', configData.resepsiLoc);
+            safeHtml('display-dresscode', configData.dresscode);
             
             const gmaps = document.getElementById('gmaps-btn');
             if (gmaps) gmaps.href = configData.mapsLink;
@@ -798,6 +845,7 @@ function doPost(e) {
             document.getElementById('cfg-resepsi-time').value = configData.resepsiTime;
             document.getElementById('cfg-resepsi-loc').value = configData.resepsiLoc;
             document.getElementById('cfg-maps-link').value = configData.mapsLink;
+            document.getElementById('cfg-dresscode').value = configData.dresscode;
             document.getElementById('cfg-bank1-name').value = configData.bank1Name;
             document.getElementById('cfg-bank1-num').value = configData.bank1Num;
             document.getElementById('cfg-bank1-holder').value = configData.bank1Holder;
