@@ -649,7 +649,7 @@ function doPost(e) {
             startCountdown();
             document.getElementById('rsvp-empty').innerText = "Memuat data...";
 
-            if (APP_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbzHzD1vyH_mp0_z3En1HY2eRJcXq4xmKpflH7-meqjOywNdnycolfx3x_EIQv5Fruf0VQ/exec") {
+            if (APP_SCRIPT_URL !== "URL_GOOGLE_APPS_SCRIPT_ANDA_DISINI") {
                 await loadDataFromGAS();
             } else {
                 document.getElementById('rsvp-empty').innerText = "Belum terhubung ke Database Google Script.";
